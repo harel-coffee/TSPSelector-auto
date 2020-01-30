@@ -163,8 +163,9 @@ def cnn_train(args, model, train_dataloader, val_dataloader, optimizer, schedule
         train_accuracy = cnn_validate(args, model, train_dataloader)
         val_accuracy = cnn_validate(args, model, val_dataloader)
         max_accuracy = max(val_accuracy, max_accuracy)
+
         # decay the learning rate
-        scheduler.step(val_accuracy)
+        #scheduler.step(val_accuracy)
         if args.verbose:
             print('epoch:{} train accuracy: {:^10}'.format(epoch, train_accuracy))
             print('epoch:{} val accuracy: {:^10}'.format(epoch, val_accuracy))
@@ -306,7 +307,7 @@ if __name__ == "__main__":
                         help='Dropout rate (1 - keep probability).')
     parser.add_argument("--batch_norm", default=False, type=bool)
     # Model Settings (ONLY FOR CNN)
-    parser.add_argument("--model_type", type=str, default='vgg11_bn')
+    parser.add_argument("--model_type", type=str, default='vgg16_bn')
     # Training settings
     parser.add_argument("--epoches", default=100, type=int)
     parser.add_argument("--batch_size", default= 16, type=int)

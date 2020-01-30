@@ -1,0 +1,80 @@
+common:
+    studyName: sider_5fold_5ensemble_dmpnn
+    algorithm: GRID_SEARCH
+    objectValueName: max_accuracy
+    metrics: [max_accuracy]
+schedulerConfig:
+    trialNum: 500
+    parallelNum: 10
+parameterConfigs:
+-   name: weight_decay
+    type: ENUM
+    categoricalValues:
+    - 5e-2
+    - 2e-3
+    - 5e-3
+    - 1e-3
+    - 2e-4
+    - 5e-4
+    - 1e-4
+    - 5e-5
+-   name: epoches
+    type: ENUM
+    categoricalValues:
+    - 5
+    - 10
+    - 15
+    - 20
+    - 25
+    - 30
+    - 40
+    - 50
+    - 60
+    - 80
+    - 100
+    - 150
+    - 200
+-   name: batch_size
+    type: ENUM
+    categoricalValues:
+    - 8
+    - 16
+    - 32
+    - 64
+-   name: learning_rate
+    type: ENUM
+    categoricalValues:
+    - 5e-3
+    - 1e-3
+    - 2e-4
+    - 5e-4
+    - 1e-4
+-   name: decay_factor
+    type: ENUM
+    categoricalValues:
+    - 0.99
+    - 0.95
+    - 0.9
+    - 0.85
+    - 0.8
+    - 0.75
+-   name: model_type
+    type: ENUM
+    categoricalValues:
+    - 'alexnet'
+    - 'resnet18'
+    - 'vgg11'
+    - 'vgg11_bn'
+    - 'vgg16'
+    - 'vgg16_bn'
+
+workerConfig:
+    runPlatform: SEVEN
+    sevenConfig:
+        user: royrong
+    runCmd: sh main.sh
+    timeOut: 14400
+    configFiles:
+    - main.sh
+notification:
+    ifEmailNotification: False
