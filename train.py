@@ -165,7 +165,7 @@ def cnn_train(args, model, train_dataloader, val_dataloader, optimizer, schedule
         max_accuracy = max(val_accuracy, max_accuracy)
 
         # decay the learning rate
-        #scheduler.step(val_accuracy)
+        scheduler.step(val_accuracy)
         if args.verbose:
             print('epoch:{} train accuracy: {:^10}'.format(epoch, train_accuracy))
             print('epoch:{} val accuracy: {:^10}'.format(epoch, val_accuracy))
