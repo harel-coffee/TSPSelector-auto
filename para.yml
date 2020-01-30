@@ -1,5 +1,5 @@
 common:
-    studyName: sider_5fold_5ensemble_dmpnn
+    studyName: TSPSelector_cnn
     algorithm: GRID_SEARCH
     objectValueName: max_accuracy
     metrics: [max_accuracy]
@@ -52,7 +52,8 @@ parameterConfigs:
 -   name: decay_factor
     type: ENUM
     categoricalValues:
-    - 0.99
+    - 0.99999
+    - 0.98
     - 0.95
     - 0.9
     - 0.85

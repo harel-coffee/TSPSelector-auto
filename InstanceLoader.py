@@ -3,15 +3,15 @@ import os
 
 import torch
 import pickle
-import scipy.sparse as sp
-from torch_geometric.data import Data
-from torch_geometric.utils.convert import from_scipy_sparse_matrix
-from sklearn.decomposition import PCA
 from torch.utils.data.dataset import Dataset
 from scipy import sparse
-from torch_geometric.data import Dataset as GeoDataset
-from hilbertcurve.hilbertcurve import HilbertCurve
 
+'''
+from torch_geometric.data import Dataset as GeoDataset
+from torch_geometric.data import Data
+from torch_geometric.utils.convert import from_scipy_sparse_matrix
+from hilbertcurve.hilbertcurve import HilbertCurve
+from sklearn.decomposition import PCA
 
 def edge_sampler(edge_index, edge_attr, prob = 0.5):
     edge_num = edge_attr.shape[0]
@@ -195,11 +195,11 @@ class InstanceDataset(Dataset):
 
     def __len__(self):
         return self.num
+'''
 
-
-"""
+'''
 Dataset of TSP image with image rotation and flip data argumentation
-"""
+'''
 class AugmentInstanceDataset(Dataset):
     def __init__(self, num_node_feats, path, labels):
         """

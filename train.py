@@ -8,9 +8,8 @@ from torchvision.models import  alexnet, resnet18, vgg11, vgg11_bn, vgg16, vgg16
 from InstanceLoader import *
 
 from torch.utils.data import DataLoader
-from torch_geometric.data import DataLoader as GeoDataLoader
 import torch.optim as optim
-from mpnn import MPNN, CGCNN, SimpleCNN
+
 
 
 def process_one_instance(data):
@@ -49,13 +48,13 @@ def load_labels(filename = '/home/kfzhao/data/ECJ_instances/algorithm_runs.arff.
         str(line[0]), int(line[1]), str(line[2]), float(line[3]), str(line[4])
         data.append((ins_id, repeat, algorithm, runtime, runstatus))
     file.close()
-    print("num of record:", len(data))
     for i in range(int(len(data) / 50)):
         instance_id, best_algorithm = process_one_instance(data[i * 50: i * 50 + 50])
         #print(instance_id, best_algorithm)
         if instance_id is not None:
             labels[instance_id] = best_algorithm
-    print("num of labels:", len(labels))
+    #print("num of record:", len(data))
+    #print("num of labels:", len(labels))
     return labels
 
 def validate(args, model, dataloader):
@@ -97,6 +96,7 @@ def cnn_validate(args, model, dataloader):
 
     accuracy = float(correct) / num_instances
     return accuracy
+
 
 def batch_train(args, model, train_dataloader, val_dataloader, optimizer, scheduler = None):
     device = args.device
@@ -234,7 +234,7 @@ def select_model(args):
         model = vgg11(pretrained=False, progress=True, **kwargs)
     elif model_type is 'vgg11_bn':
         model = vgg11_bn(pretrained=False, progress=True, **kwargs)
-    elif model_type is 'vgg16:':
+    elif model_type is 'vgg16':
         model = vgg16(pretrained=False, progress=True, **kwargs)
     elif model_type is 'vgg16_bn':
         model = vgg16_bn(pretrained=False, progress=True, **kwargs)
@@ -307,7 +307,7 @@ if __name__ == "__main__":
                         help='Dropout rate (1 - keep probability).')
     parser.add_argument("--batch_norm", default=False, type=bool)
     # Model Settings (ONLY FOR CNN)
-    parser.add_argument("--model_type", type=str, default='vgg16_bn')
+    parser.add_argument("--model_type", type=str, default='vgg16')
     # Training settings
     parser.add_argument("--epoches", default=100, type=int)
     parser.add_argument("--batch_size", default= 16, type=int)
