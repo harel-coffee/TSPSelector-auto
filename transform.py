@@ -90,7 +90,7 @@ class Interpolate(object):
 
 """
 default coordinates to image transformations
-image size (num_gird * scale_factor, num_grid * scale_factor)
+image size (num_grid * scale_factor, num_grid * scale_factor)
 """
 default_train_transforms = transforms.Compose([
     RandomRotate(num_rotate = 8),

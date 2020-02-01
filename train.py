@@ -325,7 +325,7 @@ if __name__ == "__main__":
     # Data Argument Settings
     parser.add_argument("--num_rotate", default=8, type=int,
                         help="number of rotation in 2*pi")
-    parser.add_argument("--num_grid", default=64, type=int,
+    parser.add_argument("--num_grid", default=32, type=int,
                         help="number of grid in the tsp image")
     parser.add_argument("--scale_factor", default=4, type=int,
                         help="reduce the image resolution by scale_factor")

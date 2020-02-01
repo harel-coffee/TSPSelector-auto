@@ -24,6 +24,8 @@ scale_factor (int): reduce the image resolution by scale_factor
 
 flip (bool) : whether to flip image
 
+the final image size is (num_grid * scale_factor, num_gird * scale_factor)
+
 --Model
 
 model_type (str): 'alexnet', 'resnet18', ...
