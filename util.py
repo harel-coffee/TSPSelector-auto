@@ -7,6 +7,7 @@ import scipy.sparse as sp
 from sklearn.decomposition import PCA
 from scipy import sparse
 from hilbertcurve.hilbertcurve import HilbertCurve
+import matplotlib.pyplot as plt
 
 from torch_geometric.utils.convert import from_scipy_sparse_matrix
 from scipy.spatial.distance import euclidean
@@ -223,28 +224,41 @@ def input_test(path = '/home/kfzhao/data/ECJ_instances/'):
         file_list.append((key, full_instance_dir))
 
     max_size = 0
+    coordinates = []
     for key, full_instance_dir in file_list:
         try:
-            """
+
             with open(full_instance_dir, 'rb') as in_file:
 
                 data = pickle.load(in_file)
                 x = data['x']
+                coordinates.append(x)
                 max_size = max(x.shape[0], max_size)
                 #max_val, min_val = x.max(), x.min()
                 #print('coo range: {}, {}'.format(min_val, max_val))
                 
                 in_file.close()
-            """
+
             #load_tsp_instance(full_instance_dir)
             #savetoTSPImage(full_instance_dir)
-            tsp_image_rotate_and_flip(full_instance_dir)
-            print("proceed: " + full_instance_dir)
+            #tsp_image_rotate_and_flip(full_instance_dir)
+            #print("proceed: " + full_instance_dir)
         except IOError:
             print("cannot open: " + full_instance_dir)
+    print("# coordinates:", len(coordinates))
+
+def visual_instance(filename):
+    in_file_dir = os.path.splitext(filename)[0] + '_{0}_{1}_image.pickle'.format(256, 360)
+    with open(in_file_dir, 'rb') as in_file:
+        data = pickle.load(in_file)
+        A = data['adj']
+        A = A.todense()
+        image_visualization(A)
 
 
-
+def image_visualization(mat):
+    plt.matshow(mat)
+    plt.show()
 
 
 def process_one_instance(data):
@@ -298,5 +312,6 @@ if __name__ == "__main__":
     #tsp_image_rotate(filename)
 
     input_test()
+    #visual_instance(filename)
     #matrix_reorder(filename)
     print("haha")

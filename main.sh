@@ -1,11 +1,14 @@
 #!/bin/bash
-
-python train.py \
-  --epoches ##epoches## \
-  --batch_size ##batch_size## \
-  --learning_rate ##learning_rate## \
-  --weight_decay ##weight_decay## \
-  --decay_factor ##decay_factor## \
-  --model_type ##model_type## \
-  --verbose False \
-  --instances_path "/home/kfzhao/data/ECJ_instances"
+unset http_proxy
+unset https_proxy
+mkdir -p /opt/ml/env/out
+mkdir -p /opt/ml/disk/out
+cp /opt/ml/disk/ECJ_instances.zip .
+unzip ECJ_instances.zip
+ls .
+pwd .
+echo START
+CUDA_VISIBLE_DEVICES=0 sh automl_run.sh
+#mv /opt/ml/env/model_dir/ /opt/ml/model/
+#rm -r /opt/ml/env/outOAE
+echo END

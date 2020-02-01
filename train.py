@@ -6,9 +6,10 @@ import random
 import numpy as np
 from torchvision.models import  alexnet, resnet18, vgg11, vgg11_bn, vgg16, vgg16_bn
 from InstanceLoader import *
-
+from transform import  *
 from torch.utils.data import DataLoader
 import torch.optim as optim
+from mpnn import SimpleCNN
 
 
 
@@ -157,7 +158,7 @@ def cnn_train(args, model, train_dataloader, val_dataloader, optimizer, schedule
             loss.backward()
             optimizer.step()
 
-            if args.verbose and (i + 1) % 50 == 0:
+            if args.verbose and (i + 1) % 10 == 0:
                 print('epoch:{} loss: {:^10}'.format(epoch, loss.item()))
 
         train_accuracy = cnn_validate(args, model, train_dataloader)
@@ -165,7 +166,8 @@ def cnn_train(args, model, train_dataloader, val_dataloader, optimizer, schedule
         max_accuracy = max(val_accuracy, max_accuracy)
 
         # decay the learning rate
-        scheduler.step(val_accuracy)
+        if (epoch + 1) % args.decay_patience == 0:
+            scheduler.step()
         if args.verbose:
             print('epoch:{} train accuracy: {:^10}'.format(epoch, train_accuracy))
             print('epoch:{} val accuracy: {:^10}'.format(epoch, val_accuracy))
@@ -228,7 +230,9 @@ def select_model(args):
     model_type = args.model_type
     kwargs = {"num_classes" : 5}
 
-    if model_type is 'resnet18':
+    if model_type is 'alexnet':
+        model = alexnet(pretrained=False, progress=True, **kwargs)
+    elif model_type is 'resnet18':
         model = resnet18(pretrained=False, progress=True, **kwargs)
     elif model_type is 'vgg11':
         model = vgg11(pretrained=False, progress=True, **kwargs)
@@ -239,19 +243,28 @@ def select_model(args):
     elif model_type is 'vgg16_bn':
         model = vgg16_bn(pretrained=False, progress=True, **kwargs)
     else:
-        model = alexnet(pretrained=False, progress=True, **kwargs)
+        model = SimpleCNN(num_classes=5)
 
     if args.verbose:
         print(model)
     return model
 
 
+def build_transform(args):
+    num_rotate = args.num_rotate
+    num_grid = args.num_grid
+    scale_factor = args.scale_factor
+    flip = args.flip
+    bt = BuildTransformation(num_rotate, num_grid, scale_factor, flip)
+
+    return bt.get_train_transform(), bt.get_val_transform()
+
 def main_cnn(args):
     instances_path = args.instances_path
     batch_size = args.batch_size
-    num_node_feats = args.in_ch
     weight_decay = args.weight_decay
     decay_factor = args.decay_factor
+    num_workers = args.num_workers
 
     lr = args.learning_rate
 
@@ -268,30 +281,32 @@ def main_cnn(args):
     val_labels = {k : labels[k] for k in val_keys}
 
 
-    #train_dataset = InstanceDataset(num_node_feats, instances_path, train_labels)
-    #val_dataset = InstanceDataset(num_node_feats, instances_path, val_labels)
+    #train_dataset = AugmentInstanceDataset(num_node_feats, instances_path, train_labels)
+    #val_dataset = AugmentInstanceDataset(num_node_feats, instances_path, val_labels)
 
-    train_dataset = AugmentInstanceDataset(num_node_feats, instances_path, train_labels)
-    val_dataset = AugmentInstanceDataset(num_node_feats, instances_path, val_labels)
+    train_transforms, val_transforms = build_transform(args)
+    train_dataset = ArgumentDataset(instances_path, train_labels, train_transforms)
+    val_dataset = ArgumentDataset(instances_path, val_labels, val_transforms)
     if args.verbose:
         print("# training images: {}".format(train_dataset.num))
         print("# validation images: {}".format(val_dataset.num))
 
-    train_dataloader = DataLoader(train_dataset, batch_size = batch_size, shuffle= True)
-    val_dataloader = DataLoader(val_dataset, batch_size = 32, shuffle= True)
+    train_dataloader = DataLoader(train_dataset, batch_size = batch_size, shuffle= True, num_workers = num_workers)
+    val_dataloader = DataLoader(val_dataset, batch_size = 32, shuffle= True, num_workers = num_workers)
 
     model = select_model(args)
 
     optimizer = optim.Adam(model.parameters(),
                            lr=lr, weight_decay=weight_decay)
 
-    scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, patience=10, factor= decay_factor)
+    scheduler = optim.lr_scheduler.ExponentialLR(optimizer, gamma=decay_factor)
 
     _, max_accuracy = cnn_train(args, model, train_dataloader, val_dataloader, optimizer, scheduler)
     return max_accuracy
 
 if __name__ == "__main__":
     parser = ArgumentParser("TSP Selector", formatter_class=ArgumentDefaultsHelpFormatter, conflict_handler="resolve")
+    """
     # Model Settings (ONLY FOR MPNN MODEL)
     parser.add_argument("--in_ch", default=2, type=int,
                         help="input features dim of nodes")
@@ -306,24 +321,37 @@ if __name__ == "__main__":
     parser.add_argument('--dropout', type=float, default=0.5,
                         help='Dropout rate (1 - keep probability).')
     parser.add_argument("--batch_norm", default=False, type=bool)
+    """
+    # Data Argument Settings
+    parser.add_argument("--num_rotate", default=8, type=int,
+                        help="number of rotation in 2*pi")
+    parser.add_argument("--num_grid", default=64, type=int,
+                        help="number of grid in the tsp image")
+    parser.add_argument("--scale_factor", default=4, type=int,
+                        help="reduce the image resolution by scale_factor")
+    parser.add_argument("--flip", default=True, type=bool)
     # Model Settings (ONLY FOR CNN)
-    parser.add_argument("--model_type", type=str, default='vgg16')
+    parser.add_argument("--model_type", type=str, default='resnet18')
     # Training settings
     parser.add_argument("--epoches", default=100, type=int)
     parser.add_argument("--batch_size", default= 16, type=int)
-    parser.add_argument("--learning_rate", default=0.00001, type=float)
-    parser.add_argument('--weight_decay', type=float, default=5e-3,
+    parser.add_argument("--learning_rate", default= 1e-4, type=float)
+    parser.add_argument('--weight_decay', type=float, default=5e-4,
                         help='Weight decay (L2 loss on parameters).')
-    parser.add_argument('--decay_factor', type=float, default=0.99,
-                        help='decay rate of learning rate (linear).')
+    parser.add_argument('--decay_factor', type=float, default=0.95,
+                        help='decay rate of (gamma).')
+    parser.add_argument('--decay_patience', type=int, default=10,
+                        help='num of epoches for one lr decay.')
     parser.add_argument('--no-cuda', action='store_true', default=False,
                         help='Disables CUDA training.')
+    parser.add_argument('--num_workers', type = int, default= 16,
+                        help='number of workers for Dataset.')
     # Other
     parser.add_argument("--instances_path", type=str, default="/home/kfzhao/data/ECJ_instances")
     parser.add_argument("--verbose", default=True, type=bool)
     args = parser.parse_args()
     if args.verbose:
         print(args)
-    #main(args)
+
     max_accuracy = main_cnn(args)
-    print("max_accuracy", max_accuracy)
+    print("max_accuracy={}".format(max_accuracy))

@@ -4,6 +4,7 @@ import os
 import torch
 import pickle
 from torch.utils.data.dataset import Dataset
+from transform import default_val_transforms
 from scipy import sparse
 
 '''
@@ -268,6 +269,51 @@ class AugmentInstanceDataset(Dataset):
         padding = (pad_width, delta_width - pad_width, pad_height, delta_height - pad_height)
         m = torch.nn.ZeroPad2d(padding=padding)
         return m(A)
+
+    def __len__(self):
+        return self.num
+
+
+
+class ArgumentDataset(Dataset):
+    def __init__(self, path, labels, transform = default_val_transforms):
+        self.path = path
+        self.labels = labels
+        self.transform = transform
+        self.all_coordinates = []
+        self.label_map = {'eax': 0,
+                          'eax.restart': 1,
+                          'lkh': 2,
+                          'lkh.restart': 3,
+                          'maos': 4}
+        for key in labels.keys():
+            dataset = key.strip().split('_')[0]
+            instance_id = key.strip().split('_')[1]
+            if dataset == 'morphed':
+                node_num = instance_id.strip().split('-')[0]
+                tmp1, tmp2 = instance_id.strip().split('---')[0], instance_id.strip().split('---')[1]
+                instance_id = node_num + "---" + tmp1 + '.tsp---' + tmp2 + '.tsp'
+            full_instance_dir = os.path.join(path, dataset, instance_id) + '.pickle'
+            with open(full_instance_dir, 'rb') as in_file:
+                data = pickle.load(in_file)
+                x = data['x']
+                self.all_coordinates.append((key, x))
+                in_file.close()
+        self.num = len(self.all_coordinates)
+
+    def __getitem__(self, index):
+        key, x = self.all_coordinates[index]
+
+        label = np.zeros(shape=(1), dtype=np.int)
+        idx = self.label_map[self.labels[key]]
+        label[0] = idx
+        label = torch.LongTensor(label)
+
+        image = self.transform(x)
+        # repeat to 3 channels
+        image = image.repeat(1, 3)
+        image = image.view((3, image.shape[0], image.shape[0]))
+        return image, label
 
     def __len__(self):
         return self.num
