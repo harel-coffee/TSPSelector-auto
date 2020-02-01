@@ -15,4 +15,4 @@ $PYTHON train.py \
   --flip ##flip## \
   --num_workers 16 \
   --verbose False \
-  --instances_path "ECJ_instances_copy"
+  --instances_path "ECJ_instances_coo"
