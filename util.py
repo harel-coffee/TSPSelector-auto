@@ -223,20 +223,17 @@ def input_test(path = '/home/kfzhao/data/ECJ_instances/'):
         full_instance_dir = os.path.join(path, dataset, instance_id) + '.pickle'
         file_list.append((key, full_instance_dir))
 
-    max_size = 0
-    coordinates = []
     for key, full_instance_dir in file_list:
         try:
 
             with open(full_instance_dir, 'rb') as in_file:
-
                 data = pickle.load(in_file)
                 x = data['x']
-                coordinates.append(x)
-                max_size = max(x.shape[0], max_size)
-                #max_val, min_val = x.max(), x.min()
-                #print('coo range: {}, {}'.format(min_val, max_val))
-                
+                out_file_dir = os.path.splitext(full_instance_dir)[0] + '.coo.pickle'
+                instance = {'x': x}
+                with open(out_file_dir, 'wb') as out_file:
+                    pickle.dump(obj=instance, file=out_file, protocol=3)
+                    out_file.close()
                 in_file.close()
 
             #load_tsp_instance(full_instance_dir)
@@ -245,7 +242,7 @@ def input_test(path = '/home/kfzhao/data/ECJ_instances/'):
             #print("proceed: " + full_instance_dir)
         except IOError:
             print("cannot open: " + full_instance_dir)
-    print("# coordinates:", len(coordinates))
+
 
 def visual_instance(filename):
     in_file_dir = os.path.splitext(filename)[0] + '_{0}_{1}_image.pickle'.format(256, 360)

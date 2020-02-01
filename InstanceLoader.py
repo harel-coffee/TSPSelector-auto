@@ -293,7 +293,7 @@ class ArgumentDataset(Dataset):
                 node_num = instance_id.strip().split('-')[0]
                 tmp1, tmp2 = instance_id.strip().split('---')[0], instance_id.strip().split('---')[1]
                 instance_id = node_num + "---" + tmp1 + '.tsp---' + tmp2 + '.tsp'
-            full_instance_dir = os.path.join(path, dataset, instance_id) + '.pickle'
+            full_instance_dir = os.path.join(path, dataset, instance_id) + '.coo.pickle'
             with open(full_instance_dir, 'rb') as in_file:
                 data = pickle.load(in_file)
                 x = data['x']

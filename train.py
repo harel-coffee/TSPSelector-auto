@@ -325,20 +325,20 @@ if __name__ == "__main__":
     # Data Argument Settings
     parser.add_argument("--num_rotate", default=8, type=int,
                         help="number of rotation in 2*pi")
-    parser.add_argument("--num_grid", default=32, type=int,
+    parser.add_argument("--num_grid", default=128, type=int,
                         help="number of grid in the tsp image")
-    parser.add_argument("--scale_factor", default=4, type=int,
+    parser.add_argument("--scale_factor", default=1, type=int,
                         help="reduce the image resolution by scale_factor")
     parser.add_argument("--flip", default=True, type=bool)
     # Model Settings (ONLY FOR CNN)
-    parser.add_argument("--model_type", type=str, default='resnet18')
+    parser.add_argument("--model_type", type=str, default='alexnet')
     # Training settings
-    parser.add_argument("--epoches", default=100, type=int)
-    parser.add_argument("--batch_size", default= 16, type=int)
+    parser.add_argument("--epoches", default=500, type=int)
+    parser.add_argument("--batch_size", default= 32, type=int)
     parser.add_argument("--learning_rate", default= 1e-4, type=float)
     parser.add_argument('--weight_decay', type=float, default=5e-4,
                         help='Weight decay (L2 loss on parameters).')
-    parser.add_argument('--decay_factor', type=float, default=0.95,
+    parser.add_argument('--decay_factor', type=float, default=0.9,
                         help='decay rate of (gamma).')
     parser.add_argument('--decay_patience', type=int, default=10,
                         help='num of epoches for one lr decay.')
@@ -347,7 +347,7 @@ if __name__ == "__main__":
     parser.add_argument('--num_workers', type = int, default= 16,
                         help='number of workers for Dataset.')
     # Other
-    parser.add_argument("--instances_path", type=str, default="/home/kfzhao/data/ECJ_instances")
+    parser.add_argument("--instances_path", type=str, default="/home/kfzhao/data/ECJ_instances_coo")
     parser.add_argument("--verbose", default=True, type=bool)
     args = parser.parse_args()
     if args.verbose:
