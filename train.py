@@ -9,12 +9,16 @@ from InstanceLoader import *
 from transform import  *
 from torch.utils.data import DataLoader
 import torch.optim as optim
-from mpnn import SimpleCNN
+from cnn import SimpleCNN
+
 
 
 
 def process_one_instance(data):
     instance_id = data[0][0]
+    dataset = instance_id.split('_')[0].strip()
+    if dataset == 'rue':
+        return None, None, None
     best_runtime = 36000
     best_algorithm = 'all'
     algorithm_to_result = {}
@@ -22,19 +26,21 @@ def process_one_instance(data):
         ins_id, repeat, algorithm, runtime, runstatus = \
         data[i][0], data[i][1], data[i][2], data[i][3], data[4]
         if ins_id != instance_id:
-            return None, None
+            return None, None, None
         if algorithm not in algorithm_to_result.keys():
             algorithm_to_result[algorithm] = list([runtime])
         else:
             algorithm_to_result[algorithm].append(runtime)
 
+    algorithm_to_median = {} # algorithm-> media runtime
     for key, value in algorithm_to_result.items():
         value.sort()
+        algorithm_to_median[key] = (value[4] + value[5]) / 2.0
         if value[5] < 3600:
             if (value[4] + value[5]) / 2.0 < best_runtime:
                 best_runtime = (value[4] + value[5]) / 2.0 # median of the test performance
                 best_algorithm = key
-    return instance_id, best_algorithm
+    return instance_id, best_algorithm, algorithm_to_median
 
 def load_labels(filename = '/home/kfzhao/data/ECJ_instances/algorithm_runs.arff.txt'):
 
@@ -50,10 +56,10 @@ def load_labels(filename = '/home/kfzhao/data/ECJ_instances/algorithm_runs.arff.
         data.append((ins_id, repeat, algorithm, runtime, runstatus))
     file.close()
     for i in range(int(len(data) / 50)):
-        instance_id, best_algorithm = process_one_instance(data[i * 50: i * 50 + 50])
+        instance_id, best_algorithm, algorithm_to_median = process_one_instance(data[i * 50: i * 50 + 50])
         #print(instance_id, best_algorithm)
         if instance_id is not None:
-            labels[instance_id] = best_algorithm
+            labels[instance_id] = (best_algorithm, algorithm_to_median)
     #print("num of record:", len(data))
     #print("num of labels:", len(labels))
     return labels
@@ -139,7 +145,7 @@ def cnn_train(args, model, train_dataloader, val_dataloader, optimizer, schedule
     if args.cuda:
         model.to(device)
 
-    max_accuracy = 0.0
+    max_train_acc, max_val_acc = 0.0, 0.0
     for epoch in range(args.epoches):
         model.train()
         for i, (data, label) in enumerate(train_dataloader):
@@ -151,7 +157,7 @@ def cnn_train(args, model, train_dataloader, val_dataloader, optimizer, schedule
             outputs = torch.nn.functional.log_softmax(outputs, dim=1)  # for cnn
             label = label.reshape((label.shape[0]))
 
-            #print('output:',outputs.shape)
+            #print('output:',torch.argmax(outputs, dim = 1))
             #print('label:', label.shape)
 
             loss = torch.nn.functional.nll_loss(outputs, label)
@@ -163,7 +169,8 @@ def cnn_train(args, model, train_dataloader, val_dataloader, optimizer, schedule
 
         train_accuracy = cnn_validate(args, model, train_dataloader)
         val_accuracy = cnn_validate(args, model, val_dataloader)
-        max_accuracy = max(val_accuracy, max_accuracy)
+        max_train_acc = max(train_accuracy, max_train_acc)
+        max_val_acc = max(val_accuracy, max_val_acc)
 
         # decay the learning rate
         if (epoch + 1) % args.decay_patience == 0:
@@ -173,7 +180,7 @@ def cnn_train(args, model, train_dataloader, val_dataloader, optimizer, schedule
             print('epoch:{} val accuracy: {:^10}'.format(epoch, val_accuracy))
     if args.verbose:
         print("finish training.")
-    return model, max_accuracy
+    return model, max_train_acc, max_val_acc
 
 
 '''
@@ -243,7 +250,13 @@ def select_model(args):
     elif model_type is 'vgg16_bn':
         model = vgg16_bn(pretrained=False, progress=True, **kwargs)
     else:
-        model = SimpleCNN(num_classes=5)
+
+        model = SimpleCNN(num_classes=5, num_cov_layer=args.num_cov_layer, channels= args.channels,
+                          kernel_size= args.kernel_size, stride= args.stride,
+                          num_mlp_layer=args.num_mlp_layer, mlp_hids= args.mlp_hids,
+                          adp_output_size=args.adp_output_size, dropout= args.dropout)
+
+        #model = SimpleCNN(num_classes=5)
 
     if args.verbose:
         print(model)
@@ -276,7 +289,8 @@ def main_cnn(args):
     # split the dataset
     keys = list(labels.keys())
     random.shuffle(keys)
-    train_keys, val_keys = keys[:1500], keys[1500:]
+    num_train_instance = int(len(keys) * 0.8)
+    train_keys, val_keys = keys[: num_train_instance], keys[num_train_instance:]
     train_labels = { k : labels[k] for k in train_keys}
     val_labels = {k : labels[k] for k in val_keys}
 
@@ -301,8 +315,10 @@ def main_cnn(args):
 
     scheduler = optim.lr_scheduler.ExponentialLR(optimizer, gamma=decay_factor)
 
-    _, max_accuracy = cnn_train(args, model, train_dataloader, val_dataloader, optimizer, scheduler)
-    return max_accuracy
+    _, max_train_acc, max_val_acc = cnn_train(args, model, train_dataloader, val_dataloader, optimizer, scheduler)
+    if args.verbose:
+        print("max_train_accuracy={}".format(max_train_acc))
+    print("max_val_accuracy={}".format(max_val_acc))
 
 if __name__ == "__main__":
     parser = ArgumentParser("TSP Selector", formatter_class=ArgumentDefaultsHelpFormatter, conflict_handler="resolve")
@@ -322,19 +338,36 @@ if __name__ == "__main__":
                         help='Dropout rate (1 - keep probability).')
     parser.add_argument("--batch_norm", default=False, type=bool)
     """
+    # Simple CNN Settings
+    parser.add_argument("--num_cov_layer", default=4, type=int,
+                        help="number of convolution layers")
+    parser.add_argument("--num_mlp_layer", default=3, type=int,
+                        help="number of mlp layers")
+    parser.add_argument("--channels", type=str, default='32 64 128 196',
+                        help="number of channels of each cov layers")
+    parser.add_argument("--mlp_hids", type=str, default='4096 4096 512',
+                        help="number of hidden units of the mlp layer")
+    parser.add_argument("--kernel_size", default=3, type=int,
+                        help="convolution kernel size ")
+    parser.add_argument("--stride", default=2, type=int,
+                        help="convolution stride")
+    parser.add_argument("--adp_output_size", default=6, type=int,
+                        help="adaptive pooling output size ")
+    parser.add_argument('--dropout', type=float, default=0.4,
+                        help='Dropout rate (1 - keep probability).')
     # Data Argument Settings
     parser.add_argument("--num_rotate", default=8, type=int,
                         help="number of rotation in 2*pi")
     parser.add_argument("--num_grid", default=128, type=int,
                         help="number of grid in the tsp image")
-    parser.add_argument("--scale_factor", default=1, type=int,
+    parser.add_argument("--scale_factor", default=2, type=int,
                         help="reduce the image resolution by scale_factor")
     parser.add_argument("--flip", default=True, type=bool)
     # Model Settings (ONLY FOR CNN)
-    parser.add_argument("--model_type", type=str, default='alexnet')
+    parser.add_argument("--model_type", type=str, default='resnet18')
     # Training settings
     parser.add_argument("--epoches", default=500, type=int)
-    parser.add_argument("--batch_size", default= 32, type=int)
+    parser.add_argument("--batch_size", default= 16, type=int)
     parser.add_argument("--learning_rate", default= 1e-4, type=float)
     parser.add_argument('--weight_decay', type=float, default=5e-4,
                         help='Weight decay (L2 loss on parameters).')
@@ -353,5 +386,4 @@ if __name__ == "__main__":
     if args.verbose:
         print(args)
 
-    max_accuracy = main_cnn(args)
-    print("max_accuracy={}".format(max_accuracy))
+    main_cnn(args)

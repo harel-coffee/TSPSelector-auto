@@ -1,1 +1,1 @@
-from .model import MPNN, CGCNN, SimpleCNN
+from .model import MPNN, CGCNN

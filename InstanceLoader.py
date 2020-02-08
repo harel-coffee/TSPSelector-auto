@@ -305,9 +305,11 @@ class ArgumentDataset(Dataset):
         key, x = self.all_coordinates[index]
 
         label = np.zeros(shape=(1), dtype=np.int)
-        idx = self.label_map[self.labels[key]]
+        idx = self.label_map[self.labels[key][0]]
+        algorithm_to_median = self.labels[key][1]
         label[0] = idx
         label = torch.LongTensor(label)
+        #TODO : algorithm_to_median
 
         image = self.transform(x)
         # repeat to 3 channels

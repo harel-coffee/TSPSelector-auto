@@ -1,11 +1,11 @@
 common:
-    studyName: TSPSelector_CNN
+    studyName: TSPSelector
     algorithm: RANDOM_SEARCH
     objectValueName: max_accuracy
     metrics: [max_accuracy]
 schedulerConfig:
-    trialNum: 1
-    parallelNum: 1
+    trialNum: 200
+    parallelNum: 20
 parameterConfigs:
 -   name: weight_decay
     type: ENUM
@@ -29,7 +29,7 @@ parameterConfigs:
     #- 50
     #- 60
     #- 80
-    - '100'
+    - '500'
     #- 150
     #- 200
 -   name: batch_size
@@ -53,7 +53,7 @@ parameterConfigs:
     categoricalValues:
     #- 0.99999
     #- 0.98
-    #- 0.95
+    - '0.9'
     - '0.8'
     - '0.5'
     - '0.1'
@@ -61,9 +61,9 @@ parameterConfigs:
 -   name: decay_patience
     type: ENUM
     categoricalValues:
-    - '5'
     - '10'
     - '20'
+    - '50'
 -   name: model_type
     type: ENUM
     categoricalValues:
@@ -77,10 +77,11 @@ parameterConfigs:
     type: ENUM
     categoricalValues:
     - '64'
+    - '128'
 -   name: num_rotate
     type: ENUM
     categoricalValues:
-    - '8'
+    - '17'
 -   name: scale_factor
     type: ENUM
     categoricalValues:
@@ -89,7 +90,6 @@ parameterConfigs:
     type: ENUM
     categoricalValues:
     - 'True'
-
 
 workerConfig:
     runPlatform: SEVEN
