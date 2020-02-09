@@ -310,12 +310,22 @@ class ArgumentDataset(Dataset):
         label[0] = idx
         label = torch.LongTensor(label)
         #TODO : algorithm_to_median
+        run_time = self.to_time_tensor(algorithm_to_median)
+        run_time = torch.FloatTensor(run_time)
 
         image = self.transform(x)
         # repeat to 3 channels
         image = image.repeat(1, 3)
         image = image.view((3, image.shape[0], image.shape[0]))
-        return image, label
+        return image, label, run_time
 
     def __len__(self):
         return self.num
+
+    def to_time_tensor(self, algorithm_to_median):
+        run_time = np.zeros(shape=(len(self.label_map)), dtype=np.float)
+        for key, value in algorithm_to_median.items():
+            run_time[self.label_map[key]] = value
+        return run_time
+
+

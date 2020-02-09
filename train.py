@@ -4,7 +4,7 @@ import os
 import pickle
 import random
 import numpy as np
-from torchvision.models import  alexnet, resnet18, vgg11, vgg11_bn, vgg16, vgg16_bn
+from torchvision.models import  alexnet, resnet18, vgg11, vgg11_bn, vgg16, vgg16_bn, mobilenet_v2
 from InstanceLoader import *
 from transform import  *
 from torch.utils.data import DataLoader
@@ -17,8 +17,10 @@ from cnn import SimpleCNN
 def process_one_instance(data):
     instance_id = data[0][0]
     dataset = instance_id.split('_')[0].strip()
+    """
     if dataset == 'rue':
         return None, None, None
+    """
     best_runtime = 36000
     best_algorithm = 'all'
     algorithm_to_result = {}
@@ -32,7 +34,7 @@ def process_one_instance(data):
         else:
             algorithm_to_result[algorithm].append(runtime)
 
-    algorithm_to_median = {} # algorithm-> media runtime
+    algorithm_to_median = {} # algorithm-> median runtime
     for key, value in algorithm_to_result.items():
         value.sort()
         algorithm_to_median[key] = (value[4] + value[5]) / 2.0
@@ -84,12 +86,26 @@ def validate(args, model, dataloader):
     accuracy = float(correct) / num_instances
     return accuracy
 
+def compute_pred_performance(idx, run_time):
+    idx, run_time = idx.cpu().numpy(), run_time.numpy()
+    res = 0.0
+    improve_cnt = 0
+    for i in range(idx.shape[0]): # for one batch
+        #print(run_time[i][1], run_time[i][idx[i]])
+        res += run_time[i][idx[i]]
+        if run_time[i][idx[i]] <= run_time[i][1]:
+            improve_cnt += 1
+    return res, improve_cnt
+
 
 def cnn_validate(args, model, dataloader):
     model.eval()
     num_instances = 0
     correct = 0
-    for i, (data, label) in enumerate(dataloader):
+    improve = 0
+    pred_performance= 0
+    single_best_performance = 0
+    for i, (data, label, run_time) in enumerate(dataloader):
         if args.cuda:
             data, label = data.cuda(), label.cuda()
 
@@ -100,8 +116,20 @@ def cnn_validate(args, model, dataloader):
         idx = torch.argmax(outputs, dim = 1)
         correct += (idx == label.squeeze()).sum().item()
         num_instances += label.shape[0]
+        # compute the real performance
+        res, improve_cnt = compute_pred_performance(idx, run_time)
+        pred_performance += res
+        improve += improve_cnt
+        single_best_performance += (run_time[:, 1].sum().item())  # 1->eax.restart
 
     accuracy = float(correct) / num_instances
+    improve_rate = float(improve) / num_instances
+    """
+    if args.verbose:
+        print("pred performance: {}".format(pred_performance))
+        print("single best performance: {}".format(single_best_performance))
+        print("improve rate: {}".format(improve_rate))
+    """
     return accuracy
 
 
@@ -148,7 +176,7 @@ def cnn_train(args, model, train_dataloader, val_dataloader, optimizer, schedule
     max_train_acc, max_val_acc = 0.0, 0.0
     for epoch in range(args.epoches):
         model.train()
-        for i, (data, label) in enumerate(train_dataloader):
+        for i, (data, label, _) in enumerate(train_dataloader):
             if args.cuda:
                 data, label = data.cuda(), label.cuda()
 
@@ -235,7 +263,7 @@ def main(args):
 
 def select_model(args):
     model_type = args.model_type
-    kwargs = {"num_classes" : 5}
+    kwargs = {"num_classes" : args.num_classes}
 
     if model_type is 'alexnet':
         model = alexnet(pretrained=False, progress=True, **kwargs)
@@ -249,9 +277,11 @@ def select_model(args):
         model = vgg16(pretrained=False, progress=True, **kwargs)
     elif model_type is 'vgg16_bn':
         model = vgg16_bn(pretrained=False, progress=True, **kwargs)
+    elif model_type is 'mobilenet':
+        model = mobilenet_v2(pretrained=False, progress=True, **kwargs)
     else:
 
-        model = SimpleCNN(num_classes=5, num_cov_layer=args.num_cov_layer, channels= args.channels,
+        model = SimpleCNN(num_classes= args.num_classes, num_cov_layer=args.num_cov_layer, channels= args.channels,
                           kernel_size= args.kernel_size, stride= args.stride,
                           num_mlp_layer=args.num_mlp_layer, mlp_hids= args.mlp_hids,
                           adp_output_size=args.adp_output_size, dropout= args.dropout)
@@ -356,7 +386,7 @@ if __name__ == "__main__":
     parser.add_argument('--dropout', type=float, default=0.4,
                         help='Dropout rate (1 - keep probability).')
     # Data Argument Settings
-    parser.add_argument("--num_rotate", default=8, type=int,
+    parser.add_argument("--num_rotate", default=16, type=int,
                         help="number of rotation in 2*pi")
     parser.add_argument("--num_grid", default=128, type=int,
                         help="number of grid in the tsp image")
@@ -364,8 +394,10 @@ if __name__ == "__main__":
                         help="reduce the image resolution by scale_factor")
     parser.add_argument("--flip", default=True, type=bool)
     # Model Settings (ONLY FOR CNN)
-    parser.add_argument("--model_type", type=str, default='resnet18')
+    parser.add_argument("--model_type", type=str, default='mobilenet')
     # Training settings
+    parser.add_argument("--num_classes", default=5, type=int,
+                        help="number of classes")
     parser.add_argument("--epoches", default=500, type=int)
     parser.add_argument("--batch_size", default= 16, type=int)
     parser.add_argument("--learning_rate", default= 1e-4, type=float)
