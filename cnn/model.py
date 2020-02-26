@@ -38,17 +38,19 @@ class SimpleCNN(nn.Module):
 
         assert num_cov_layer == len(num_channels) and num_mlp_layer == len(num_mlp_hids)
 
-
         modules = []
         for layer in range(num_cov_layer):
             if layer == 0:
-                cov = nn.Conv2d(3, num_channels[layer], kernel_size= kernel_size, stride = stride, padding= 1)
+                cov = nn.Conv2d(3, num_channels[layer], kernel_size= 11, stride = 4, padding= 2)
             else:
                 cov = nn.Conv2d(num_channels[layer - 1], num_channels[layer],
-                                kernel_size= kernel_size, stride = stride, padding= 1)
+                                kernel_size= kernel_size, padding= 1)
             modules.append(cov)
-            modules.append(nn.ReLU())
-        modules.append(nn.MaxPool2d(kernel_size= kernel_size, stride=stride))
+            modules.append(nn.ReLU(inplace=True))
+            if layer < 2:
+                modules.append(nn.MaxPool2d(kernel_size=kernel_size, stride=stride))
+        if num_cov_layer > 2:
+            modules.append(nn.MaxPool2d(kernel_size= kernel_size, stride=stride))
 
         self.features = nn.Sequential(*modules)
 
@@ -62,7 +64,7 @@ class SimpleCNN(nn.Module):
             else:
                 line = nn.Linear(num_mlp_hids[layer - 1], num_mlp_hids[layer])
             classifier.append(line)
-            classifier.append(nn.ReLU())
+            classifier.append(nn.ReLU(inplace= True))
         classifier.append(nn.Linear(num_mlp_hids[num_mlp_layer - 1], num_classes))
 
         self.classifier = nn.Sequential(*classifier)
