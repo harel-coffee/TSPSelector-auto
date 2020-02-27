@@ -1,1 +1,5 @@
 data/*
+ml/selector
+ml/classifier
+ml/__pycache__
+.vscode
