@@ -1,10 +1,10 @@
 common:
     studyName: TSPSelector
     algorithm: RANDOM_SEARCH
-    objectValueName: max_accuracy
-    metrics: [max_accuracy]
+    objectValueName: avg_run_time
+    metrics: [avg_run_time]
 schedulerConfig:
-    trialNum: 200
+    trialNum: 400
     parallelNum: 20
 parameterConfigs:
 -   name: weight_decay
@@ -44,10 +44,12 @@ parameterConfigs:
     categoricalValues:
     - '1e-2'
     - '5e-3'
+    - '2e-3'
     - '1e-3'
     - '5e-4'
     - '2e-4'
     - '1e-4'
+    - '5e-5'
 -   name: decay_factor
     type: ENUM
     categoricalValues:
@@ -69,10 +71,12 @@ parameterConfigs:
     categoricalValues:
     - 'alexnet'
     - 'resnet18'
+    - 'resnet34'
+    - 'resnet50'
     #- 'vgg11'
-    #- 'vgg11_bn'
+    - 'vgg11_bn'
     #- 'vgg16'
-    #- 'vgg16_bn'
+    - 'vgg16_bn'
 -   name: num_grid
     type: ENUM
     categoricalValues:
@@ -82,6 +86,9 @@ parameterConfigs:
     type: ENUM
     categoricalValues:
     - '17'
+    - '7'
+    - '29'
+    - '59'
 -   name: scale_factor
     type: ENUM
     categoricalValues:
@@ -90,6 +97,20 @@ parameterConfigs:
     type: ENUM
     categoricalValues:
     - 'True'
+-   name: weight_exp
+    type: ENUM
+    categoricalValues:
+    - '0'
+    - '0.01'
+    - '0.1'
+    - '0.2'
+    - '0.5'
+    - '0.8'
+    - '1.0'
+    - '1.2'
+    - '1.5'
+    - '2.0'
+    - '3.0'
 
 workerConfig:
     runPlatform: SEVEN
@@ -98,6 +119,6 @@ workerConfig:
         cluster: dev
         user: royrong
     runCmd: sh main.sh
-    timeOut: 14400
+    timeOut: 36000
     configFiles:
     - automl_run.sh

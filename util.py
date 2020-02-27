@@ -260,6 +260,11 @@ def image_visualization(mat):
 
 def process_one_instance(data):
     instance_id = data[0][0]
+    dataset = instance_id.split('_')[0].strip()
+    """
+    if dataset == 'rue':
+        return None, None, None
+    """
     best_runtime = 36000
     best_algorithm = 'all'
     algorithm_to_result = {}
@@ -267,19 +272,23 @@ def process_one_instance(data):
         ins_id, repeat, algorithm, runtime, runstatus = \
         data[i][0], data[i][1], data[i][2], data[i][3], data[4]
         if ins_id != instance_id:
-            return None, None
+            return None, None, None
         if algorithm not in algorithm_to_result.keys():
             algorithm_to_result[algorithm] = list([runtime])
         else:
             algorithm_to_result[algorithm].append(runtime)
 
+    algorithm_to_median = {} # algorithm-> median runtime
     for key, value in algorithm_to_result.items():
         value.sort()
+        algorithm_to_median[key] = (value[4] + value[5]) / 2.0
         if value[5] < 3600:
             if (value[4] + value[5]) / 2.0 < best_runtime:
                 best_runtime = (value[4] + value[5]) / 2.0 # median of the test performance
                 best_algorithm = key
-    return instance_id, best_algorithm
+        else:
+            algorithm_to_median[key] = 36000.0
+    return instance_id, best_algorithm, algorithm_to_median
 
 def load_labels(filename = '/home/kfzhao/data/ECJ_instances/algorithm_runs.arff.txt'):
 
@@ -294,21 +303,38 @@ def load_labels(filename = '/home/kfzhao/data/ECJ_instances/algorithm_runs.arff.
         str(line[0]), int(line[1]), str(line[2]), float(line[3]), str(line[4])
         data.append((ins_id, repeat, algorithm, runtime, runstatus))
     file.close()
-    print("num of record:", len(data))
+    label_file = open('./tsp_labels.txt', 'w')
+    num_instances = 0
+    sbs_run_time = 0
+    best_run_time = 0
     for i in range(int(len(data) / 50)):
-        instance_id, best_algorithm = process_one_instance(data[i * 50: i * 50 + 50])
+        instance_id, best_algorithm, algorithm_to_median = process_one_instance(data[i * 50: i * 50 + 50])
         #print(instance_id, best_algorithm)
         if instance_id is not None:
-            labels[instance_id] = best_algorithm
-    print("num of labels:", len(labels))
+            labels[instance_id] = (best_algorithm, algorithm_to_median)
+            num_instances += 1
+            sbs_run_time += algorithm_to_median['eax.restart']
+            best_run_time += algorithm_to_median[best_algorithm]
+            res = instance_id + ',' + best_algorithm
+            for key, values in algorithm_to_median.items():
+                res = res + ',' + key + ',' + str(values)
+            res = res + '\n'
+            label_file.write(res)
+    #print("num of record:", len(data))
+    #print("num of labels:", len(labels))
+    label_file.close()
+    print("average sbs run time={}".format(sbs_run_time / num_instances))
+    print("average best run time={}".format(best_run_time / num_instances))
     return labels
+
+
 
 if __name__ == "__main__":
     print("start")
     #load_tsp_instance(filename)
     #tsp_image_rotate(filename)
-
-    input_test()
+    #input_test()
     #visual_instance(filename)
     #matrix_reorder(filename)
+    load_labels()
     print("haha")
