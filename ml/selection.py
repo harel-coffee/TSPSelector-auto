@@ -69,7 +69,7 @@ if __name__ == "__main__":
     scorer = make_scorer(par10, greater_is_better=False)
 
     # initialize sffs feature selector
-    selector = SequentialFeatureSelector(estimator=CutEstimator(classifier), k_features='best',
+    selector = SequentialFeatureSelector(estimator=CutEstimator(classifier), k_features=16,
                                          forward=True, floating=True, verbose=2,
                                          scoring=scorer, cv=kf, n_jobs=n_cores,
                                          pre_dispatch='n_jobs', clone_estimator=True,
