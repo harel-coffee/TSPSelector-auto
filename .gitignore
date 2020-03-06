@@ -1,5 +1,5 @@
-solver/LKH-2.0.7-restart/SRC/OBJ/*
-solver/LKH-2.0.7-restart/paramfile
+solver/LKH-restart/SRC/OBJ
+solver/LKH-restart/paramfile
 data/*
 ml/selector
 ml/classifier
@@ -8,7 +8,5 @@ ml/__pycache__
 solver/GA-EAX/bin
 solver/GA-EAX-restart/bin
 solver/examples
-solver/LKH-2.0.7/SRC/OBJ
-solver/LKH-2.0.7/paramfile
-solver/LKH-2.0.7-restart/SRC/OBJ
-solver/LKH-2.0.7-restart/paramfile
+solver/LKH/SRC/OBJ
+solver/LKH/paramfile
