@@ -8,3 +8,5 @@ solver/GA-EAX-restart/bin
 solver/examples
 solver/LKH-2.0.7/SRC/OBJ
 solver/LKH-2.0.7/paramfile
+solver/LKH-2.0.7-restart/SRC/OBJ
+solver/LKH-2.0.7-restart/paramfile
