@@ -70,7 +70,7 @@ void TEnvironment::doIt()
 			gBestValue = fBestValue;
 			gBest = tBest;
 			printf("find better solution %d\n", gBestValue);
-			if (gBestValue <= optimum)
+			if (gBestValue <= this->optimum)
 			{
 				printf("find optimum solution %d, exit\n", gBestValue);
 				break;
@@ -194,7 +194,11 @@ void TEnvironment::getEdgeFreq(){
 void TEnvironment::printOn()
 {
 	printf("Total time: %d\n ", (int)((double)(this->fTimeEnd - this->fTimeStart) / (double)CLOCKS_PER_SEC));
-	printf("bestval = %d\n", gBestValue);
+	printf("bestval = %d, optimum = %d \n", gBestValue, this->optimum);
+	if (gBestValue <= this->optimum)
+		printf("Successful\n");
+	else
+		printf("Unsuccessful\n");
 	fflush(stdout);
 }
 

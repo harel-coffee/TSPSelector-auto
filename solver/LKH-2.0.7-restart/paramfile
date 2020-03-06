@@ -1,0 +1,2 @@
+PROBLEM_FILE = ../examples/att532.tsp
+OPTIMUM = 27685

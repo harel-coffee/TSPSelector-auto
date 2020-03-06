@@ -17,13 +17,18 @@ using namespace std;
 
 int gBestValue; // global best value
 TIndi gBest;	// global best solution
+int optimum;    // optimum cost
 
 void signalHandler(int signum)
 {
 	cout << endl
 		 << "Signal (" << signum << ") received.\n";
 	cout << endl;
-	printf("bestval = %d\n", gBestValue);
+	printf("bestval = %d, optimum = %d \n", gBestValue, optimum);
+	if (gBestValue <= optimum)
+		printf("Successful\n");
+	else
+		printf("Unsuccessful\n");
 	fflush(stdout);
 
 	exit(signum);
@@ -33,7 +38,7 @@ int main( int argc, char* argv[] )
 {
 	signal(SIGTERM, signalHandler);
 	signal(SIGINT, signalHandler);
-
+	signal(SIGKILL, signalHandler);
 	InitURandom(); 
 	int maxNumOfTrial=1000;
 
@@ -49,7 +54,7 @@ int main( int argc, char* argv[] )
 	gEnv->fFileNameTSP = argv[1];
 	gEnv->Npop = atoi(argv[2]);
 	gEnv->Nch = atoi(argv[3]);
-	gEnv->optimum = atoi(argv[4]);
+	optimum = gEnv->optimum = atoi(argv[4]);
 	gEnv->tmax = atoi(argv[5]);
 
 	cout << "Initialization ..." << endl;
