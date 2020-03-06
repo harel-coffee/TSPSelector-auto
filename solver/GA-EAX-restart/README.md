@@ -6,4 +6,4 @@ g++ -o ../bin/GA-EAX-restart -O3 main.cpp environment.cpp cross.cpp evaluator.cp
 
 To call GA-EAX
 
-./GA-EAX tsp_file NPOP NCH optimum tmax
+./GA-EAX-restart tsp_file NPOP NCH optimum tmax
