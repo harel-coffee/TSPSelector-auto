@@ -54,10 +54,8 @@ int main( int argc, char* argv[] )
 
 	cout << "Initialization ..." << endl;
 	gEnv->define();
-	for( int n = 0; n < maxNumOfTrial; ++n ){ 
-		if(gEnv->doIt() == 1) break;
-		// gEnv->writeBest();
-	}
+	gEnv->doIt();
+	// gEnv->writeBest();
 	gEnv->printOn();
 	//system("pause");
 	return 0;

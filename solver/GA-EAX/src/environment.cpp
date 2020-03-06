@@ -56,7 +56,7 @@ void TEnvironment::define()
 	this->fTimeStart = clock();
 }
 
-int TEnvironment::doIt()
+void TEnvironment::doIt()
 {
 	this->initPop();
 	this->init();
@@ -85,12 +85,12 @@ int TEnvironment::doIt()
 				break;
 			}
 		}
-
-		if( this->terminationCondition() )
-		{
-			this->fTimeEnd = clock();
-			break;
-		}
+		// only terminate when optimum found or time budget exhausted
+		// if( this->terminationCondition() )
+		// {
+		// 	this->fTimeEnd = clock();
+		// 	break;
+		// }
 
 		this->selectForMating();
 		for( int s =0; s < Npop; ++s ) this->generateKids( s );     
@@ -98,11 +98,6 @@ int TEnvironment::doIt()
 		++fCurNumOfGen;
 	}
 	this->fTimeEnd = clock();
-	if ((int)((double)(this->fTimeEnd - this->fTimeStart) / (double)CLOCKS_PER_SEC) >= tmax || gBestValue <= optimum)
-	{
-		return 1;
-	}
-	return 0;
 }
  
 void TEnvironment::init(){

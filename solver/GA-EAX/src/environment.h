@@ -40,7 +40,7 @@ public:
 	~TEnvironment();
 
 	void define();						// ��ʼ��
-	int doIt();						// GA������
+	void doIt();						// GA������
 	void init();						// GA��ʼ��
 	bool terminationCondition();		// �˳�����          
 	void setAverageBest();				// ������Ⱥƽ��TSP��������Ⱥ����TSP����        

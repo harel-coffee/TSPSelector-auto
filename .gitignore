@@ -3,3 +3,6 @@ ml/selector
 ml/classifier
 ml/__pycache__
 .vscode
+solver/GA-EAX/bin
+solver/GA-EAX-restart/bin
+solver/examples
