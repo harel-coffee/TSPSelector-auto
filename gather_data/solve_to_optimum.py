@@ -4,6 +4,7 @@ solve all instances with concorde
 import sys
 import time
 import subprocess
+import json
 
 def solve(option):
     directory = '../data/TSP/%s/' % option
@@ -41,9 +42,34 @@ def solve(option):
     print 'Total consumned ' + str(time.time() - start_time)
 
 def extract():
-    pass
+    setSize = 1000
+    optimumFile = '../data/TSP/TSP_optimum.json'
+    options = ["RUE", "cl", "explosion", "implosion", "cluster",
+               "compression", "expansion", "grid", "linearprojection",
+               "rotation"]
+
+    optimum_f = open(optimumFile, 'w+')
+    optimum = dict()
+
+    for option in options:
+        instancePath = 'data/TSP/%s/' % option
+        for i in range(setSize):
+            solutionFile = '%s%s_%d' % ('../data/TSP/optimal_solutions/', option, i+1)
+            insFile = '%s%d.tsp' % (instancePath, i+1)
+            with open(solutionFile, 'r') as f:
+                lines = f.readlines()
+                for line in lines:
+                    if 'Optimal Solution' in line:
+                        solution = line[line.find(':')+1:].strip()
+                        optimum[insFile] = solution
+                        break
+    json.dump(optimum, optimum_f)
+    optimum_f.close()
 
 if __name__ == '__main__':
+    # options: [RUE, cl, explosion, implosion .cluster,compression,expansion,grid,linearprojection
+    # rotation]
+
     if sys.argv[1] == 'solve':
         solve(sys.argv[2])
     if sys.argv[1] == 'extract':

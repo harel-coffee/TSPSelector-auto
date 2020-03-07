@@ -22,15 +22,16 @@ if __name__ == '__main__':
 
     # generate netgen instances (centers from 4-8, 200)
     num_ngen_each = 200
-    num_c_l = [4, 5, 6, 7, 8]
+    num_c_l = 4
+    num_c_u = 8
     f.write('Netgen Instances \n')
-    for num_c in num_c_l:
-        seed = rd.randint(1, 1000000)
-        # Rscript call_netgen.R point_lower point_upper cluster_num ins_num seed
-        cmd = 'Rscript call_netgen.R %d %d %d %d %d' % (500, 2000, num_c, num_ngen_each, seed)
-        pid = subprocess.Popen(cmd, shell=True)
-        pid.wait()
-        f.write('%s\n' % cmd)
+    seed = rd.randint(1, 1000000)
+    # Rscript call_netgen.R point_lower point_upper clu.lower clu.upper ins_num seed
+    cmd = 'Rscript call_netgen.R %d %d %d %d %d %d' %\
+            (500, 2000, num_c_l, num_c_u, num_ngen_each, seed)
+    pid = subprocess.Popen(cmd, shell=True)
+    pid.wait()
+    f.write('%s\n' % cmd)
 
     # generate mutation instances
     opts = ["explosion", "implosion", "cluster",
@@ -46,3 +47,4 @@ if __name__ == '__main__':
         pid = subprocess.Popen(cmd, shell=True)
         pid.wait()
         f.write('%s\n' % cmd)
+    f.close()

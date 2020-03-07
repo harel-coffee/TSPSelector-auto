@@ -20,7 +20,7 @@ seed <- as.integer(args[5])
 
 set.seed(seed)
 
-for (i in 0L:ins.num)
+for (i in 1:ins.num)
 {
     points.num <- sample(points.lower:points.upper, 1, replace=TRUE)
     x = generateRandomNetwork(n.points = points.num, lower = 0, upper = 1)
@@ -65,6 +65,6 @@ for (i in 0L:ins.num)
     x$lower = 0
     x$upper = 1000000
 
-    name = sprintf("../data/TSP/%s/%d.tsp", operator, i+1)
+    name = sprintf("../data/TSP/%s/%d.tsp", operator, i)
     exportToTSPlibFormat(x, name, use.extended.format=FALSE)
 }
