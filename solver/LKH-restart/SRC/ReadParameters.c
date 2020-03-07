@@ -392,8 +392,8 @@ void ReadParameters()
     MoveType = 5;
     NonsequentialMoveType = -1;
     Optimum = MINUS_INFINITY;
-    PatchingA = 1;
-    PatchingC = 0;
+    PatchingA = 2;
+    PatchingC = 3;
     PatchingAExtended = 0;
     PatchingARestricted = 0;
     PatchingCExtended = 0;

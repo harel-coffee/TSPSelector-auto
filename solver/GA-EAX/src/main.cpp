@@ -15,7 +15,7 @@
 #include <iostream>
 using namespace std;
 
-int gBestValue; // global best value
+int gBestValue = -1; // global best value
 TIndi gBest;	// global best solution
 int optimum;    // optimum cost
 
@@ -25,7 +25,7 @@ void signalHandler(int signum)
 		 << "Signal (" << signum << ") received.\n";
 	cout << endl;
 	printf("bestval = %d, optimum = %d \n", gBestValue, optimum);
-	if (gBestValue <= optimum)
+	if (gBestValue != -1 && gBestValue <= optimum)
 		printf("Successful\n");
 	else
 		printf("Unsuccessful\n");

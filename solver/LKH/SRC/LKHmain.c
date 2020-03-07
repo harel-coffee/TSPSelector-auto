@@ -10,7 +10,7 @@ void signalHandler(int signum)
 {
     printf("Signal ( %d ) received.\n", signum);
     printf("bestval = %d, optimum = %d \n", globalbest, Optimum);
-    if(globalbest <= Optimum) printf("Successful\n");
+    if(globalbest != -1 && globalbest <= Optimum) printf("Successful\n");
     else printf("Unsuccessful\n");
     fflush(stdout);
     exit(signum);
@@ -28,6 +28,8 @@ int main(int argc, char *argv[])
     if (argc >= 2)
         ParameterFileName = argv[1];
     ReadParameters();
+    if (argc >= 3)
+        Seed = atoi(argv[2]);
     MaxMatrixDimension = 10000;
     ReadProblem();
 
@@ -70,7 +72,7 @@ int main(int argc, char *argv[])
         printf("find optimum %d, exit\n", BestCost);
         printf("bestval = %d, optimum = %d \n", BestCost, Optimum);
         printf("Successful\n");
-        return 0;
+        return EXIT_SUCCESS;
     }
 
     /* Find a specified number (Runs) of local optima */
@@ -89,7 +91,7 @@ int main(int argc, char *argv[])
                 printf("find optimum %d, exit\n", globalbest);
                 printf("bestval = %d, optimum = %d \n", globalbest, Optimum);
                 printf("Successful\n");
-                return 0;
+                return EXIT_SUCCESS;
             }
         }
         if (MaxPopulationSize > 1) {
@@ -140,7 +142,7 @@ int main(int argc, char *argv[])
                 printf("find optimum %d, exit\n", globalbest);
                 printf("bestval = %d, optimum = %d \n", globalbest, Optimum);
                 printf("Successful\n");
-                return 0;
+                return EXIT_SUCCESS;
             }
         }
         if (Cost < Optimum) {

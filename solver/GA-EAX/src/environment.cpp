@@ -195,7 +195,7 @@ void TEnvironment::printOn()
 {
 	printf("Total time: %d\n ", (int)((double)(this->fTimeEnd - this->fTimeStart) / (double)CLOCKS_PER_SEC));
 	printf("bestval = %d, optimum = %d \n", gBestValue, this->optimum);
-	if (gBestValue <= this->optimum)
+	if (gBestValue != -1 && gBestValue <= this->optimum)
 		printf("Successful\n");
 	else
 		printf("Unsuccessful\n");

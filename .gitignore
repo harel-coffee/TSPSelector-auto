@@ -1,5 +1,6 @@
 solver/LKH-restart/SRC/OBJ
 solver/LKH-restart/paramfile
+solver/LKH-restart/LKH
 data/*
 ml/selector
 ml/classifier
@@ -10,3 +11,4 @@ solver/GA-EAX-restart/bin
 solver/examples
 solver/LKH/SRC/OBJ
 solver/LKH/paramfile
+solver/LKH/LKH
