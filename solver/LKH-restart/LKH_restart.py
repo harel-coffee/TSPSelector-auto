@@ -14,7 +14,7 @@ pid = 0
 def signal_handler(sig, _):
     if not pid.poll():
         pid.terminate()
-        sys.exit(sig)
+    sys.exit(sig)
 
 def call_LKH(argv):
     while True:
