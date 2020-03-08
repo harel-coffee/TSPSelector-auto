@@ -6,11 +6,10 @@ import time
 import subprocess
 import json
 
-def solve(option):
+def solve(option, parallism):
     directory = '../data/TSP/%s/' % option
     setSize = 1000
 
-    parallism = 80
     running_tasks = 0
     sub_process = set()
     solver_path = '../../ACPP/Solver/Concorde/concorde'
@@ -71,6 +70,6 @@ if __name__ == '__main__':
     # rotation]
 
     if sys.argv[1] == 'solve':
-        solve(sys.argv[2])
+        solve(sys.argv[2], int(sys.argv[3]))
     if sys.argv[1] == 'extract':
         extract()
