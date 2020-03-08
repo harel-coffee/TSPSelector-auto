@@ -39,7 +39,7 @@ int main( int argc, char* argv[] )
 	signal(SIGTERM, signalHandler);
 	signal(SIGINT, signalHandler);
 	signal(SIGKILL, signalHandler);
-	InitURandom(); 
+
 	int maxNumOfTrial=1000;
 
 	TEnvironment* gEnv = new TEnvironment();
@@ -56,6 +56,7 @@ int main( int argc, char* argv[] )
 	gEnv->Nch = atoi(argv[3]);
 	optimum = gEnv->optimum = atoi(argv[4]);
 	gEnv->tmax = atoi(argv[5]);
+	InitURandom(atoi(argv[6]));
 
 	cout << "Initialization ..." << endl;
 	gEnv->define();

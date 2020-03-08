@@ -34,15 +34,15 @@ def solve(option, parallism):
     # check if subprocess all exits
     while sub_process:
         time.sleep(20)
-        print 'Still %d sub process not exits' % len(sub_process)
+        print('Still %d sub process not exits' % len(sub_process))
         finished = [pid for pid in sub_process if pid.poll() is not None]
         sub_process -= set(finished)
 
-    print 'Total consumned ' + str(time.time() - start_time)
+    print('Total consumned ' + str(time.time() - start_time))
 
 def extract():
     setSize = 1000
-    optimumFile = '../data/TSP/TSP_optimum.json'
+    optimumFile = '../data/TSP/optimum.json'
     options = ["RUE", "cl", "explosion", "implosion", "cluster",
                "compression", "expansion", "grid", "linearprojection",
                "rotation"]
