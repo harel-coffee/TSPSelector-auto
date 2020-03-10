@@ -58,10 +58,10 @@ for (i in 1:ins.num)
         x$coordinates = doRotationMutation(x$coordinates, pm=0.4)
     }
 
-    x$coords = relocateDuplicates(x$coords)
     x = rescaleNetwork(x, method = "global2")
     x$coordinates = x$coordinates * 1000000
     x$coordinates = round(x$coordinates, 0)
+    x$coords = relocateDuplicates(x$coords)
     x$lower = 0
     x$upper = 1000000
 
