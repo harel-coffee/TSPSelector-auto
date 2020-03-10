@@ -11,6 +11,7 @@ from transform import  *
 from torch.utils.data import DataLoader
 import torch.optim as optim
 from cnn import SimpleCNN
+from mpnn import softCrossEntropy, WeightedMultiLabelBinaryClassification, WeightedMeanSquareError
 
 
 
@@ -110,7 +111,7 @@ def cnn_validate(args, model, dataloader):
     pred_performance= 0.0
     best_performance = 0.0
     single_best_performance = 0.0
-    for i, (data, label, run_time) in enumerate(dataloader):
+    for i, (data, label, _, run_time) in enumerate(dataloader):
         if args.cuda:
             data, label = data.cuda(), label.cuda()
 
@@ -118,7 +119,11 @@ def cnn_validate(args, model, dataloader):
         outputs = torch.nn.functional.log_softmax(outputs, dim=1)  # for resnet
         outputs = outputs.squeeze()
 
-        idx = torch.argmax(outputs, dim = 1)
+        #idx = torch.argmax(outputs, dim = 1)
+        #label = torch.argmax(label, dim = 1) # for soft cross entropy
+        idx = torch.argmin(outputs, dim = 1) # for mse loss
+        label = torch.argmin(label, dim = 1)
+
         correct += (idx == label.squeeze()).sum().item()
         num_instances += label.shape[0]
         # compute the real performance
@@ -198,34 +203,33 @@ def cnn_train(args, model, train_dataloader, val_dataloader, optimizer, schedule
     if args.cuda:
         model.to(device)
 
+    #criterion = torch.nn.CrossEntropyLoss(reduction='none')
+    #criterion = softCrossEntropy()
+    #criterion = WeightedMultiLabelBinaryClassification()
+    criterion = WeightedMeanSquareError()
     max_train_acc, max_val_acc = 0.0, 0.0
     best_train_performance, best_val_performance = float('inf'), float('inf')
     for epoch in range(args.epoches):
         total_loss = 0.0
         model.train()
-        for i, (data, label, run_time) in enumerate(train_dataloader):
+        for i, (data, label, weights, _) in enumerate(train_dataloader):
             if args.cuda:
-                data, label = data.cuda(), label.cuda()
+                data, label, weights = data.cuda(), label.cuda(), weights.cuda()
 
             optimizer.zero_grad()
             outputs = model(data)
-            label = label.reshape((label.shape[0]))
-            ''''
-            outputs = torch.nn.functional.log_softmax(outputs, dim=1)  # for cnn
-            label = label.reshape((label.shape[0]))
+            #label = label.reshape((label.shape[0]))
 
-            #print('output:',torch.argmax(outputs, dim = 1))
-            #print('label:', label.shape)
-
-            loss = torch.nn.functional.nll_loss(outputs, label)
             '''
             weights = generate_weights(outputs, run_time, weight_exp)
             if args.cuda:
                 weights = weights.cuda()
-            criterion = torch.nn.CrossEntropyLoss(reduction= 'none')
+            
             loss = criterion(outputs, label)
             loss = torch.dot(loss,  weights)
+            '''
 
+            loss = criterion(outputs, label, weights)
             loss.backward()
             optimizer.step()
 
@@ -447,13 +451,13 @@ if __name__ == "__main__":
                         help="reduce the image resolution by scale_factor")
     parser.add_argument("--flip", default=True, type=bool)
     # Model Settings (ONLY FOR CNN)
-    parser.add_argument("--model_type", type=str, default='vgg16')
+    parser.add_argument("--model_type", type=str, default='resnet18')
     # Training settings
     parser.add_argument("--num_classes", default=5, type=int,
                         help="number of classes")
     parser.add_argument("--num_fold", default=5, type=int,
                         help="number of fold for cross validation")
-    parser.add_argument("--epoches", default=5, type=int)
+    parser.add_argument("--epoches", default=50, type=int)
     parser.add_argument("--batch_size", default= 16, type=int)
     parser.add_argument("--learning_rate", default= 2e-4, type=float)
     parser.add_argument('--weight_decay', type=float, default=1e-3,
@@ -462,7 +466,7 @@ if __name__ == "__main__":
                         help='decay rate of (gamma).')
     parser.add_argument('--decay_patience', type=int, default=50,
                         help='num of epoches for one lr decay.')
-    parser.add_argument('--weight_exp', type=float, default=0.5,
+    parser.add_argument('--weight_exp', type=float, default=2.0,
                         help='loss weight exp factor.')
     parser.add_argument('--no-cuda', action='store_true', default=False,
                         help='Disables CUDA training.')
