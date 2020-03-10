@@ -129,6 +129,12 @@ public final class CycleInfoManager implements ICycleInfoEngine, ITrialInitEngin
 
     //check termination conditions
     boolean isTerminated = overallCutoffCriterion.isCycleTerminated(cycleNumber, cycleBestState) || historicalStateHandler.isOptimalState(cycleBestState);
+    // print successful and exit the program
+    boolean reachOptimal = historicalStateHandler.isOptimalState(cycleBestState);
+    if (reachOptimal){
+      System.out.println("Successful");
+      System.exit(0);
+    }
 
     boolean hasRecordState = historicalStateHandler.updateHistoricalState(cycleBestState);
     boolean isNormalOutput = normalScreenOutputHandler.isCycleNormalOutput(cycleNumber);

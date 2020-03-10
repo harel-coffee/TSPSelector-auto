@@ -229,7 +229,6 @@ public final class MAOSExecuter {
       maSolver.execOneRun(cycleChecker);
       cycleChecker.setEnd();
     }
-    System.out.println("Successful");
   }
 
   public static AbsMAOSInitializer loadProblemType(String problemType) throws Exception {
