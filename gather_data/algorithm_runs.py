@@ -10,12 +10,13 @@ import numpy as np
 
 def extract_result(result_names, needtest, data, insts,
                    insnum, algs, retimes,
-                   dire, tmax, fromindex):
-    for n in range(fromindex, insnum):
+                   dire, tmax, instype):
+    for n in range(insnum):
         for nn in range(retimes):
             for nnn, tu in enumerate(algs):
-                file = 'Ins%d_%s_rep%d' %\
-                       (n, tu[0], nn)
+                file = '%s%s_%s_%s_rep%d' %\
+                       (dire, instype, insts[n].split('/')[-1],
+                        tu[0], nn)
                 if file in result_names:
                     with open(dire + file, 'r') as fp:
                         lines = fp.read().strip().split('\n')
@@ -31,7 +32,7 @@ def extract_result(result_names, needtest, data, insts,
                             rngseed = int(rngseed)
                             if status in ['TIMEOUT', 'Unsuccessful']:
                                 runtime = tmax
-                            data[n, nn, nnn] = (tu[0], n, insts[n], runtime, 0, status)
+                            data[n, nn, nnn] = (tu[0], insts[n], runtime, 0, status)
                         if not flag:
                             print("Not found result for SMAC/PARAMILS in %s" % (file))
                             needtest.append((n, nn, nnn))
@@ -41,29 +42,30 @@ def extract_result(result_names, needtest, data, insts,
                     needtest.append((n, nn, nnn))
 
 if __name__ == '__main__':
-    # python algorithm_runs.py paralism from_index
+    # python algorithm_runs.py paralism option
     # for each algorithm, we run it on each instance for three times
     os.chdir('..')
     maxParalism = int(sys.argv[1])
-    from_index = (sys.argv[2])
+    option = sys.argv[2]
 
-    seeds = [0, 42, 1024]
-    repeat = 3
+    seeds = [0, 42, 64, 128, 1024]
+    repeat = len(seeds)
     cutoff_time = 3600
     output_dir = 'data/TSP/runs/'
     result_dir = 'data/TSP/'
 
-    instances = []
-    instances.extend(glob('data/TSP/RUE/*'))
-    instances.extend(glob('data/TSP/cl/*'))
-    instances.extend(glob('data/TSP/explosion/*'))
-    instances.extend(glob('data/TSP/implosion/*'))
-    instances.extend(glob('data/TSP/cluster/*'))
-    instances.extend(glob('data/TSP/compression/*'))
-    instances.extend(glob('data/TSP/rotation/*'))
-    instances.extend(glob('data/TSP/expansion/*'))
-    instances.extend(glob('data/TSP/linearprojection/*'))
-    instances.extend(glob('data/TSP/gridmutation/*'))
+    # instances = []
+    # instances.extend(glob('data/TSP/RUE/*'))
+    # instances.extend(glob('data/TSP/cl/*'))
+    # instances.extend(glob('data/TSP/explosion/*'))
+    # instances.extend(glob('data/TSP/implosion/*'))
+    # instances.extend(glob('data/TSP/cluster/*'))
+    # instances.extend(glob('data/TSP/compression/*'))
+    # instances.extend(glob('data/TSP/rotation/*'))
+    # instances.extend(glob('data/TSP/expansion/*'))
+    # instances.extend(glob('data/TSP/linearprojection/*'))
+    # instances.extend(glob('data/TSP/gridmutation/*'))
+    instances = glob('data/TSP/%s/*' % option)
     ins_num = len(instances)
 
     algos = []
@@ -80,14 +82,14 @@ if __name__ == '__main__':
     alg_num = len(algos)
 
     algorithm_runs = np.zeros((ins_num, repeat, alg_num),
-                              dtype=[('alg', 'S10'), ('ins_id', 'i8'),
+                              dtype=[('alg', 'S10'),
                                      ('ins_name', 'S50'), ('runtime', 'f8'),
                                      ('quality', 'f8'), ('status', 'S10')
                                     ])
 
     runningTask = 0
     processSet = set()
-    for i in range(from_index, ins_num):
+    for i in range(ins_num):
         print('------------------Testing instance %d---------------' % i)
         for k in range(repeat):
             seed = seeds[k]
@@ -103,8 +105,9 @@ if __name__ == '__main__':
                         continue
                     else:
                         instance = instances[i]
-                        output_file = '%sIns%d_%s_rep%d' %\
-                                      (output_dir, i, t[0], k)
+                        output_file = '%s%s_%s_%s_rep%d' %\
+                                      (output_dir, option, instance.split('/')[-1],\
+                                       t[0], k)
                         cmd = ("%s %s %d %.1f %d %d > %s" %
                                (t[1], instance, 0, cutoff_time,
                                 0, seed, output_file))
@@ -123,7 +126,7 @@ if __name__ == '__main__':
     nameList = os.listdir(output_dir)
     need_test_ones = []
     extract_result(nameList, need_test_ones, algorithm_runs, instances,
-                   ins_num, algos, repeat, output_dir, cutoff_time, from_index)
+                   ins_num, algos, repeat, output_dir, cutoff_time, option)
 
     re_test = 1
     while need_test_ones:
@@ -144,8 +147,9 @@ if __name__ == '__main__':
                     continue
                 else:
                     seed = seeds[one[1]]
-                    output_file = '%sIns%d_%s_rep%d' %\
-                                  (output_dir, one[0], algos[one[2]][0], one[1])
+                    output_file = '%s%s_%s_%s_rep%d' %\
+                                  (output_dir, option, instances[one[0]].split('/')[-1],\
+                                   algos[one[2]][0], one[1])
                     cmd = ("%s %s %d %.1f %d %d > %s" %\
                            (algos[one[2]][1], instances[one[0]], 0, cutoff_time, 0,
                             seed, output_file))
@@ -164,8 +168,8 @@ if __name__ == '__main__':
         nameList = os.listdir(output_dir)
         need_test_ones = []
         extract_result(nameList, need_test_ones, algorithm_runs, instances,
-                       ins_num, algos, repeat, output_dir, cutoff_time, from_index)
+                       ins_num, algos, repeat, output_dir, cutoff_time, option)
         re_test += 1
 
-np.save(result_dir + 'algorithm_runs', algorithm_runs)
-print(datetime.datetime.now())
+    np.save(result_dir + 'algorithm_runs', algorithm_runs)
+    print(datetime.datetime.now())
