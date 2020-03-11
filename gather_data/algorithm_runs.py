@@ -75,6 +75,8 @@ if __name__ == '__main__':
                   " --solutionity data/TSP/optimum.json "))
     algos.append(("GA-EAX-restart", "python -u solver/GA-EAX-restart/wrapper.py --mem-limit 1024"
                   " --solutionity data/TSP/optimum.json "))
+    algos.append(("MAOS", "python -u solver/MAOS-TSP/wrapper.py --mem-limit 1024"
+                  " --solutionity data/TSP/optimum.json "))
     alg_num = len(algos)
 
     algorithm_runs = np.zeros((ins_num, repeat, alg_num),
