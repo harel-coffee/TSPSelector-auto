@@ -51,7 +51,7 @@ for (i in 1:ins.num)
     }
     if (operator == "linearprojection")
     {
-        x$coordinates = doExplosionMutation(x$coordinates, pm=0.4, p.jitter=0, jitter.sd=0.05)
+        x$coordinates = doLinearProjectionMutation(x$coordinates, pm=0.4, p.jitter=0, jitter.sd=0.05)
     }
     if (operator == "rotation")
     {
