@@ -36,7 +36,7 @@ def call_LKH(argv):
 if __name__ == '__main__':
     signal.signal(signal.SIGINT, signal_handler)
     signal.signal(signal.SIGTERM, signal_handler)
-    if len(sys.argv) != 2:
-        print ("./LKH_restart.py paramfile\n")
+    if len(sys.argv) != 3:
+        print("./LKH_restart.py paramfile seed\n")
         sys.exit(-1)
     call_LKH(sys.argv)
