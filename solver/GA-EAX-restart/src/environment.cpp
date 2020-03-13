@@ -35,102 +35,70 @@ TEnvironment::~TEnvironment(){
 void TEnvironment::define()
 {
 	fEvaluator->setInstance( fFileNameTSP );
-	gBestValue = -1;
-	gBest.define(fEvaluator->Ncity);
-	// int N = fEvaluator->Ncity;
-	// fIndexForMating = new int [ Npop + 1 ];  
-	// tCurPop = new TIndi [ Npop ];
-	// for ( int i = 0; i < Npop; ++i ) tCurPop[i].define( N );
-
-	// tBest.define( N );
-	// tCross = new TCross( N );
-	// tCross->eval = fEvaluator;                 
-	// tCross->Npop = Npop;             
-
-	// tKopt = new TKopt( N );
-	// tKopt->eval = fEvaluator;
-	// tKopt->setInvNearList();
-	// fEdgeFreq = new int* [ N ]; 
-	// for( int i = 0; i < N; ++i ) fEdgeFreq[ i ] = new int [ N ]; 
-}
-
-void TEnvironment::define_for_restart()
-{
 	int N = fEvaluator->Ncity;
-	fIndexForMating = new int[Npop + 1];
-	tCurPop = new TIndi[Npop];
-	for (int i = 0; i < Npop; ++i)
-		tCurPop[i].define(N);
+	fIndexForMating = new int [ Npop + 1 ];  
+	tCurPop = new TIndi [ Npop ];
+	for ( int i = 0; i < Npop; ++i ) tCurPop[i].define( N );
 
-	tBest.define(N);
-	tCross = new TCross(N);
-	tCross->eval = fEvaluator;
-	tCross->Npop = Npop;
+	gBestValue = -1;
+	gBest.define(N);
 
-	tKopt = new TKopt(N);
+	tBest.define( N );
+	tCross = new TCross( N );
+	tCross->eval = fEvaluator;                 
+	tCross->Npop = Npop;             
+
+	tKopt = new TKopt( N );
 	tKopt->eval = fEvaluator;
 	tKopt->setInvNearList();
-	fEdgeFreq = new int *[N];
-	for (int i = 0; i < N; ++i) fEdgeFreq[i] = new int[N];
+	fEdgeFreq = new int* [ N ]; 
+	for( int i = 0; i < N; ++i ) fEdgeFreq[ i ] = new int [ N ];
+	this->fTimeStart = clock();
 }
 
 void TEnvironment::doIt()
 {
-	this->define();
-	this->fTimeStart = clock();
-	this->fTimeEnd = this->fTimeStart;
-	bool flag = false; // find optimum
-	int trial = 0; // num of trial
+	this->initPop();
+	this->init();
+	this->getEdgeFreq();
+	this->fTimeEnd = clock();
 
-	while((int)((double)(this->fTimeEnd - this->fTimeStart)/(double)CLOCKS_PER_SEC) < tmax)
+	while ((int)((double)(this->fTimeEnd - this->fTimeStart) / (double)CLOCKS_PER_SEC) < tmax)
 	{
-		trial ++;
-		this->define_for_restart();
-		this->initPop();
-		this->init();
-		this->getEdgeFreq();
-		while (1)
+		this->setAverageBest();
+		if (gBestValue == -1 || fBestValue < gBestValue)
 		{
-			// each generation of GA-EAX
-			this->setAverageBest();
-			if(gBestValue == -1 || fBestValue < gBestValue)
+			gBestValue = fBestValue;
+			gBest = tBest;
+			printf("find better solution %d\n", gBestValue);
+			if (gBestValue <= this->optimum)
 			{
-				gBestValue = fBestValue;
-				gBest = tBest;
-				printf("Trial %d, find better solution %d\n", trial, gBestValue);
-				if(gBestValue <= this->optimum)
-				{
-					flag = true;
-					printf("Trial %d, find optimum solution %d, exit\n", trial, gBestValue);
-					break;
-				}
-			}
-			if (fCurNumOfGen % 100 == 0)
-			{
-				printf("Trial %-5d Gen %-5d:\t%-10d\t%-.2f\n", trial, fCurNumOfGen, fBestValue, fAverageValue);
-				this->fTimeEnd = clock();
-				if((int)((double)(this->fTimeEnd - this->fTimeStart)/(double)CLOCKS_PER_SEC) >= tmax)
-				{
-					break;
-				}
-			}
-
-			if (this->terminationCondition())
-			{
-				this->fTimeEnd = clock();
+				printf("find optimum solution %d, exit\n", gBestValue);
 				break;
 			}
-
-			this->selectForMating();
-			for (int s = 0; s < Npop; ++s)
-				this->generateKids(s);
-
-			++fCurNumOfGen;
+		}
+		if (fCurNumOfGen % 100 == 0)
+		{
+			printf("%d:\t%d\t%lf\n", fCurNumOfGen, fBestValue, fAverageValue);
+			this->fTimeEnd = clock();
+			if ((int)((double)(this->fTimeEnd - this->fTimeStart) / (double)CLOCKS_PER_SEC) >= tmax)
+			{
+				break;
+			}
 		}
 
-		if(flag) break;
+		if (this->terminationCondition())
+		{
+			break;
+		}
+
+		this->selectForMating();
+		for (int s = 0; s < Npop; ++s)
+			this->generateKids(s);
+
+		++fCurNumOfGen;
+		this->fTimeEnd = clock();
 	}
-	this->fTimeEnd = clock();
 }
 
 void TEnvironment::init(){

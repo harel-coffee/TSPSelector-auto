@@ -37,7 +37,6 @@ int main( int argc, char* argv[] )
 	signal(SIGTERM, signalHandler);
 	signal(SIGINT, signalHandler);
 	signal(SIGKILL, signalHandler);
-	int maxNumOfTrial;
 
 	TEnvironment* gEnv = new TEnvironment();
 	gEnv->fFileNameTSP=(char*)malloc(100);
@@ -57,10 +56,14 @@ int main( int argc, char* argv[] )
 	InitURandom(atoi(argv[6]));
 
 	cout<<"Initialization ..."<<endl;
-
-	gEnv->doIt(); 
+	gEnv->define();
+	for (int n = 0; n < 1000000; ++n)
+	{
+		printf("Run %d\n", n);
+		gEnv->doIt();
+		if (gBestValue != -1 && gBestValue <= optimum) break;
+	}
 	gEnv->printOn();
-	// gEnv->writeBest();
 
 	return 0;
 }

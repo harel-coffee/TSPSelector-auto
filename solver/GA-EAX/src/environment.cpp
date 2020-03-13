@@ -61,6 +61,7 @@ void TEnvironment::doIt()
 	this->initPop();
 	this->init();
 	this->getEdgeFreq();
+	this->fTimeEnd = clock();
 
 	while ((int)((double)(this->fTimeEnd - this->fTimeStart) / (double)CLOCKS_PER_SEC) < tmax)
 	{
@@ -96,8 +97,8 @@ void TEnvironment::doIt()
 		for( int s =0; s < Npop; ++s ) this->generateKids( s );     
 
 		++fCurNumOfGen;
+		this->fTimeEnd = clock();
 	}
-	this->fTimeEnd = clock();
 }
  
 void TEnvironment::init(){
@@ -193,6 +194,7 @@ void TEnvironment::getEdgeFreq(){
 
 void TEnvironment::printOn()
 {
+	this->fTimeEnd = clock();
 	printf("Total time: %d\n ", (int)((double)(this->fTimeEnd - this->fTimeStart) / (double)CLOCKS_PER_SEC));
 	printf("bestval = %d, optimum = %d \n", gBestValue, this->optimum);
 	if (gBestValue != -1 && gBestValue <= this->optimum)
