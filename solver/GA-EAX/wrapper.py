@@ -5,7 +5,7 @@ import os
 from genericWrapper4AC.generic_wrapper import AbstractWrapper
 
 
-class GA_EAX_restart_wrapper(AbstractWrapper):
+class GA_EAX_wrapper(AbstractWrapper):
     '''
         Simple wrapper for LKHWrapper
     '''
@@ -18,7 +18,7 @@ class GA_EAX_restart_wrapper(AbstractWrapper):
                                  default=None,
                                  help="optimal solutions")
 
-    def get_command_line_args(self, runargs, _):
+    def get_command_line_args(self, runargs, config):
         '''
         Returns the command line call string to execute the target algorithm
         Args:
@@ -38,9 +38,10 @@ class GA_EAX_restart_wrapper(AbstractWrapper):
         optimumFile = self.args.obj_file
         with open(optimumFile, 'r') as f:
             optimum = json.load(f)
-        cmd = '%s %s %d %d %f %.1f %d' %\
-              (binary, runargs['instance'], 100, 30, optimum, runargs['cutoff'],
-               runargs['seed'])
+        cmd = '%s %s %d %d %s %.1f %d' %\
+              (binary, runargs['instance'], 100, 30, optimum[runargs['instance']],\
+               runargs['cutoff'], runargs['seed'])
+        print(cmd)
         return cmd
 
     def process_results(self, filepointer, _):
@@ -89,9 +90,8 @@ class GA_EAX_restart_wrapper(AbstractWrapper):
                         resultMap["status"] = "SUCCESS"
                         resultMap["quality"] = 1
                         break
-        self.tmpParamFile.close()
         return resultMap
 
 if __name__ == "__main__":
-    wrapper = GA_EAX_restart_wrapper()
+    wrapper = GA_EAX_wrapper()
     wrapper.main()

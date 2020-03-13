@@ -18,8 +18,9 @@ class MAOSWrapper(AbstractWrapper):
                                  dest="obj_file",
                                  default=None,
                                  help="optimal solutions")
+        os.chdir('solver/MAOS-TSP/myprojects')
 
-    def get_command_line_args(self, runargs, _):
+    def get_command_line_args(self, runargs, config):
         '''
         Returns the command line call string to execute the target algorithm
         Args:
@@ -35,16 +36,17 @@ class MAOSWrapper(AbstractWrapper):
         Returns:
             A command call list to execute the target algorithm.
         '''
-        os.chdir("solver/MAOS-TSP/myprojects")
-        binary = "java -server -Xmx1024M -cp ../release/MAOS_SEQ.jar maosKernel.MAOSExecuter"
+        binary = "java -server -Xmx2048M -cp ../release/MAOS_SEQ.jar maosKernel.MAOSExecuter"
         # TSP:Problem=rl1323 N=300 T=500 Tcon=100 DUP_TIMES=100"
-        optimumFile = self.args.obj_file
+        optimumFile = '../../../' + self.args.obj_file
         with open(optimumFile, 'r') as f:
             optimum = json.load(f)
+        optimum = optimum[runargs["instance"]]
         values = runargs["instance"].split('/')
-        instance = "%s_%s" % (values[2], values[3])
-        cmd = '%s TSP:Problem=%s N=300 T=500 Tcon=100 DUP_TIMES=1000000 opt=%f' %\
-              (binary, instance, optimum[runargs["instance"]])
+        instance = "%s_%s" % (values[-2], values[-1])
+        cmd = '%s TSP:Problem=%s N=300 T=500 Tcon=100 DUP_TIMES=1000000 opt=%s' %\
+              (binary, instance, optimum)
+        print(cmd)
         return cmd
 
     def process_results(self, filepointer, _):
@@ -93,7 +95,6 @@ class MAOSWrapper(AbstractWrapper):
                         resultMap["status"] = "SUCCESS"
                         resultMap["quality"] = 1
                         break
-        self.tmpParamFile.close()
         return resultMap
 
 

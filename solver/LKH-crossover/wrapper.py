@@ -1,11 +1,12 @@
 import json
 import re
 import os
+from tempfile import NamedTemporaryFile
 
 from genericWrapper4AC.generic_wrapper import AbstractWrapper
 
 
-class GA_EAX_restart_wrapper(AbstractWrapper):
+class LKHWrapper(AbstractWrapper):
     '''
         Simple wrapper for LKHWrapper
     '''
@@ -34,13 +35,18 @@ class GA_EAX_restart_wrapper(AbstractWrapper):
         Returns:
             A command call list to execute the target algorithm.
         '''
-        binary = "solver/GA-EAX-restart/bin/GA-EAX-restart"
+        binary = "solver/LKH/LKH"
         optimumFile = self.args.obj_file
         with open(optimumFile, 'r') as f:
             optimum = json.load(f)
-        cmd = '%s %s %d %d %s %.1f %d' %\
-              (binary, runargs['instance'], 100, 30,
-               optimum[runargs['instance']], runargs['cutoff'], runargs['seed'])
+        tmp = NamedTemporaryFile('w+', prefix='Paramfile')
+        tmp.write('PROBLEM_FILE=%s\n' % runargs["instance"])
+        tmp.write('OPTIMUM=%s\n' % optimum[runargs["instance"]])
+        tmp.write('POPULATION_SIZE=50\n')
+        tmp.write('SEED=%d\n' % runargs["seed"])
+        tmp.flush()
+        cmd = '%s %s %s' % (binary, tmp.name, runargs['seed'])
+        self.tmpParamFile = tmp
         print(cmd)
         return cmd
 
@@ -90,8 +96,9 @@ class GA_EAX_restart_wrapper(AbstractWrapper):
                         resultMap["status"] = "SUCCESS"
                         resultMap["quality"] = 1
                         break
+        self.tmpParamFile.close()
         return resultMap
 
 if __name__ == "__main__":
-    wrapper = GA_EAX_restart_wrapper()
+    wrapper = LKHWrapper()
     wrapper.main()

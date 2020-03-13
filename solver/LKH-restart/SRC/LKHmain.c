@@ -110,6 +110,18 @@ int main(int argc, char *argv[])
             for (i = 0; i < PopulationSize; i++) {
                 GainType OldCost = Cost;
                 Cost = MergeTourWithIndividual(i);
+                if (globalbest == -1 || Cost < globalbest)
+                {
+                    globalbest = Cost;
+                    printf("find better solution %d\n", globalbest);
+                    if (globalbest <= Optimum && StopAtOptimum)
+                    {
+                        printf("find optimum %d, exit\n", globalbest);
+                        printf("bestval = %d, optimum = %d \n", globalbest, Optimum);
+                        printf("Successful\n");
+                        return EXIT_SUCCESS;
+                    }
+                }
                 if (TraceLevel >= 1 && Cost < OldCost) {
                     printff("  Merged with %d: Cost = " GainFormat, i + 1,
                             Cost);

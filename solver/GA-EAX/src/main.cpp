@@ -46,9 +46,9 @@ int main( int argc, char* argv[] )
 	gEnv->fFileNameTSP=(char*)malloc(100);
 	// ./GA-EAX tsp_file NPOP NCH optimum tmax
 	// default: 100, 30, -1(unknown optimum), 3600
-	if (argc != 6)
+	if (argc != 7)
 	{
-		cout << "./GA-EAX tsp_file NPOP NCH optimum tmax";
+		cout << "./GA-EAX tsp_file NPOP NCH optimum tmax seed";
 		exit(-1);
 	}
 	gEnv->fFileNameTSP = argv[1];

@@ -1,6 +1,9 @@
 solver/LKH-restart/SRC/OBJ
 solver/LKH-restart/paramfile
 solver/LKH-restart/LKH
+solver/LKH-crossover/SRC/OBJ
+solver/LKH-crossover/paramfile
+solver/LKH-crossover/LKH
 data/*
 ml/selector
 ml/classifier

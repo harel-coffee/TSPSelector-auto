@@ -19,7 +19,7 @@ class LKHWrapper(AbstractWrapper):
                                  default=None,
                                  help="optimal solutions")
 
-    def get_command_line_args(self, runargs, _):
+    def get_command_line_args(self, runargs, config):
         '''
         Returns the command line call string to execute the target algorithm
         Args:
@@ -35,7 +35,7 @@ class LKHWrapper(AbstractWrapper):
         Returns:
             A command call list to execute the target algorithm.
         '''
-        binary = "solver/TSP/LKH/LKH"
+        binary = "solver/LKH/LKH"
         optimumFile = self.args.obj_file
         with open(optimumFile, 'r') as f:
             optimum = json.load(f)
@@ -46,6 +46,7 @@ class LKHWrapper(AbstractWrapper):
         tmp.flush()
         cmd = '%s %s %s' % (binary, tmp.name, runargs['seed'])
         self.tmpParamFile = tmp
+        print(cmd)
         return cmd
 
     def process_results(self, filepointer, _):
