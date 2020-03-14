@@ -41,6 +41,12 @@ class WeightedMultiLabelBinaryClassification(Module):
         return
 
     def forward(self, inputs, target, weights = None):
+        """
+        :param inputs: predictions: N * C
+        :param target: target labels: N * C
+        :param weights: weight: N * C
+        :return: loss
+        """
         loss = self.bce(inputs, target)
         sample_num, class_num = target.shape
         if weights is not None:
