@@ -1,12 +1,13 @@
 import math
 
+
+import numpy as np
 import torch
 import torch.nn.functional as F
 from torch.nn.parameter import Parameter
 from torch.nn import BatchNorm1d, Linear, BCEWithLogitsLoss, MSELoss
 from torch.nn.modules.module import Module
 from torch_geometric.nn.conv import MessagePassing
-
 class FC(Module):
     def __init__(self, in_ch, out_ch):
         super(FC, self).__init__()
@@ -131,62 +132,3 @@ class CGConv(MessagePassing):
         return '{}({}, {}, dim={})'.format(self.__class__.__name__,
                                            self.in_channels, self.out_channels,
                                            self.dim)
-
-
-
-class softCrossEntropy(Module):
-    def __init__(self):
-        super(softCrossEntropy, self).__init__()
-        return
-
-    def forward(self, inputs, target, weights = None):
-        """
-        :param inputs: predictions
-        :param target: target labels
-        :param weights: weight
-        :return: loss
-        """
-        log_likelihood = - F.log_softmax(inputs, dim=1)
-        #print("target : {}".format(target))
-        #print("llh : {}".format(log_likelihood))
-        sample_num, class_num = target.shape
-        loss = torch.mul(log_likelihood, target)
-        if weights is not None:
-            loss = torch.mul(loss, weights)
-        loss = torch.sum(loss)/sample_num
-
-        return loss
-
-class WeightedMultiLabelBinaryClassification(Module):
-    def __init__(self):
-        super(WeightedMultiLabelBinaryClassification, self).__init__()
-        self.bce = BCEWithLogitsLoss(reduction='none')
-        return
-
-    def forward(self, inputs, target, weights = None):
-        loss = self.bce(inputs, target)
-        sample_num, class_num = target.shape
-        if weights is not None:
-            loss = torch.mul(loss, weights)
-        loss = torch.sum(loss) / sample_num
-        return loss
-
-
-class WeightedMeanSquareError(Module):
-    def __init__(self):
-        super(WeightedMeanSquareError, self).__init__()
-        self.mse = MSELoss(reduction='none')
-        return
-
-    def forward(self, inputs, target, weights = None):
-        loss = self.mse(inputs, target)
-        sample_num, class_num = target.shape
-        if weights is not None:
-            loss = torch.mul(loss, weights)
-        loss = torch.sum(loss) / sample_num
-        return loss
-
-
-class WeightedNLLLoss(Module):
-    def __init__(self):
-        super(WeightedNLLLoss, self).__init__()

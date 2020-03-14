@@ -276,9 +276,10 @@ class AugmentInstanceDataset(Dataset):
 
 
 class ArgumentDataset(Dataset):
-    def __init__(self, path, labels, transform = default_val_transforms):
+    def __init__(self, args, path, labels, transform = default_val_transforms):
         self.path = path
         self.labels = labels
+        self.label_type = args.loss_type
         self.transform = transform
         self.all_coordinates = []
         self.label_map = {'eax': 0,
@@ -306,17 +307,32 @@ class ArgumentDataset(Dataset):
 
         algorithm_to_median = self.labels[key][1]
 
-        #TODO : algorithm_to_median
         run_time = self.to_time_tensor(algorithm_to_median)
-        label = self.to_mse_label_tensor(run_time)
+
+        # generate the label
+        if self.label_type == 'nll':
+            label = self.to_nll_label_tensor(key)
+            label = torch.LongTensor(label)
+        elif self.label_type == 'sce':
+            label = self.to_sce_label_tensor(run_time)
+            label = torch.FloatTensor(label)
+        elif self.label_type == 'bce':
+            label = self.to_bce_label_tensor(run_time)
+            label = torch.FloatTensor(label)
+        elif self.label_type == 'mse':
+            label = self.to_mse_label_tensor(run_time)
+            label = torch.FloatTensor(label)
+
+        # generate the weights
         weights = self.run_time_normalize(run_time)
         weights = torch.FloatTensor(weights)
-        label = torch.FloatTensor(label)
 
+        # generate the image
         image = self.transform(x)
         # repeat to 3 channels
         image = image.repeat(1, 3)
         image = image.view((3, image.shape[0], image.shape[0]))
+
         return image, label, run_time, run_time
 
 
@@ -337,7 +353,7 @@ class ArgumentDataset(Dataset):
         baseline = run_time[np.argsort(run_time)[-3]]
         #print("baseline : {}".format(baseline))
         mask = np.where(run_time > baseline, 0, 1)
-        label = 1.0 / np.power(run_time, 2.0)
+        label = 1.0 / np.power(run_time, exp)
         label = np.multiply(label, mask)
         label = label / np.sum(label)
         #print("label: {}".format(label))
@@ -362,6 +378,7 @@ class ArgumentDataset(Dataset):
         label = np.zeros(shape=(1), dtype=np.int)
         idx = self.label_map[self.labels[key][0]]
         label[0] = idx
+        return label
 
 
     def run_time_normalize(self, run_time):
