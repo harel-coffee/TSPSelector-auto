@@ -8,7 +8,7 @@ from glob import glob
 import numpy as np
 
 
-def extract_result(result_names, needtest, data, insts,
+def extract_result(needtest, data, insts,
                    insnum, algs, retimes,
                    dire, tmax, instype):
     for n in range(insnum):
@@ -17,8 +17,8 @@ def extract_result(result_names, needtest, data, insts,
                 file = '%s%s_%s_%s_rep%d' %\
                        (dire, instype, insts[n].split('/')[-1],
                         tu[0], nn)
-                if file in result_names:
-                    with open(dire + file, 'r') as fp:
+                if os.path.isfile(file):
+                    with open(file, 'r') as fp:
                         lines = fp.read().strip().split('\n')
                         flag = False
                         for line in lines:
@@ -30,6 +30,9 @@ def extract_result(result_names, needtest, data, insts,
                             (status, runtime, _, _, rngseed) = values[0:5]
                             runtime = float(runtime)
                             rngseed = int(rngseed)
+                            if status == 'CRASHED':
+                                needtest.append((n, nn, nnn))
+                                continue
                             if status in ['TIMEOUT', 'Unsuccessful']:
                                 runtime = tmax
                             data[n, nn, nnn] = (tu[0], insts[n], runtime, 0, status)
@@ -41,6 +44,27 @@ def extract_result(result_names, needtest, data, insts,
                     print("Not found file %s" % (file))
                     needtest.append((n, nn, nnn))
 
+def summary():
+    out_dir = 'data/TSP/runs/'
+    result_files = glob('%s*_algorithm_runs*' % out_dir)
+    f = open('data/TSP/algorithm_runs.csv', 'w+')
+    f.write('ins_name,alg_name,repeat,status,runtime\n')
+    for result_file in result_files:
+        pm = np.load(open(result_file, 'rb'))
+    ins_size, repeat_times, algs_size = pm.shape
+    for ins_index in range(ins_size):
+        for alg_index in range(algs_size):
+            for repeat_index in range(repeat_times):
+                v = pm[ins_index, repeat_index, alg_index]
+                f.write('%s,%s,%d,%s,%.2f\n' % (v['ins_name'].decode("utf-8"),
+                                                v['alg'].decode("utf-8"),
+                                                repeat_index,
+                                                v['status'].decode("utf-8"),
+                                                v['runtime']))
+
+    f.close()
+
+
 if __name__ == '__main__':
     # python algorithm_runs.py paralism option
     # for each algorithm, we run it on each instance for three times
@@ -51,8 +75,7 @@ if __name__ == '__main__':
     seeds = [0, 42, 64, 128, 1024]
     repeat = len(seeds)
     cutoff_time = 900
-    output_dir = 'data/TSP/runs/'
-    result_dir = 'data/TSP/'
+    result_dir = 'data/TSP/runs/'
 
     # instances = []
     # instances.extend(glob('data/TSP/RUE/*'))
@@ -66,6 +89,10 @@ if __name__ == '__main__':
     # instances.extend(glob('data/TSP/linearprojection/*'))
     # instances.extend(glob('data/TSP/grid/*'))
     for option in options:
+        output_dir = 'data/TSP/runs/%s/' % option
+        if not os.path.isdir(output_dir):
+            os.mkdir(output_dir)
+
         instances = glob('data/TSP/%s/*' % option)
         ins_num = len(instances)
 
@@ -87,8 +114,8 @@ if __name__ == '__main__':
         alg_num = len(algos)
 
         algorithm_runs = np.zeros((ins_num, repeat, alg_num),
-                                  dtype=[('alg', 'S10'),
-                                         ('ins_name', 'S50'), ('runtime', 'f8'),
+                                  dtype=[('alg', 'S20'),
+                                         ('ins_name', 'S100'), ('runtime', 'f8'),
                                          ('quality', 'f8'), ('status', 'S10')
                                         ])
 
@@ -127,9 +154,8 @@ if __name__ == '__main__':
             finished = [pid for pid in processSet if pid.poll() is not None]
             processSet -= set(finished)
 
-        nameList = os.listdir(output_dir)
         need_test_ones = []
-        extract_result(nameList, need_test_ones, algorithm_runs, instances,
+        extract_result(need_test_ones, algorithm_runs, instances,
                        ins_num, algos, repeat, output_dir, cutoff_time, option)
 
         re_test = 1
@@ -169,9 +195,8 @@ if __name__ == '__main__':
                 finished = [pid for pid in processSet if pid.poll() is not None]
                 processSet -= set(finished)
 
-            nameList = os.listdir(output_dir)
             need_test_ones = []
-            extract_result(nameList, need_test_ones, algorithm_runs, instances,
+            extract_result(need_test_ones, algorithm_runs, instances,
                            ins_num, algos, repeat, output_dir, cutoff_time, option)
             re_test += 1
 
