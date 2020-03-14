@@ -276,9 +276,10 @@ class AugmentInstanceDataset(Dataset):
 
 
 class ArgumentDataset(Dataset):
-    def __init__(self, path, labels, transform = default_val_transforms):
+    def __init__(self, args, path, labels, transform = default_val_transforms):
         self.path = path
         self.labels = labels
+        self.label_type = args.loss_type
         self.transform = transform
         self.all_coordinates = []
         self.label_map = {'eax': 0,
@@ -304,20 +305,36 @@ class ArgumentDataset(Dataset):
     def __getitem__(self, index):
         key, x = self.all_coordinates[index]
 
-        label = np.zeros(shape=(1), dtype=np.int)
-        idx = self.label_map[self.labels[key][0]]
         algorithm_to_median = self.labels[key][1]
-        label[0] = idx
-        label = torch.LongTensor(label)
-        #TODO : algorithm_to_median
-        run_time = self.to_time_tensor(algorithm_to_median)
-        run_time = torch.FloatTensor(run_time)
 
+        run_time = self.to_time_tensor(algorithm_to_median)
+
+        # generate the label
+        if self.label_type == 'nll':
+            label = self.to_nll_label_tensor(key)
+            label = torch.LongTensor(label)
+        elif self.label_type == 'sce':
+            label = self.to_sce_label_tensor(run_time)
+            label = torch.FloatTensor(label)
+        elif self.label_type == 'bce':
+            label = self.to_bce_label_tensor(run_time)
+            label = torch.FloatTensor(label)
+        elif self.label_type == 'mse':
+            label = self.to_mse_label_tensor(run_time)
+            label = torch.FloatTensor(label)
+
+        # generate the weights
+        weights = self.run_time_normalize(run_time)
+        weights = torch.FloatTensor(weights)
+
+        # generate the image
         image = self.transform(x)
         # repeat to 3 channels
         image = image.repeat(1, 3)
         image = image.view((3, image.shape[0], image.shape[0]))
-        return image, label, run_time
+
+        return image, label, run_time, run_time
+
 
     def __len__(self):
         return self.num
@@ -328,4 +345,43 @@ class ArgumentDataset(Dataset):
             run_time[self.label_map[key]] = value
         return run_time
 
+    def to_sce_label_tensor(self, run_time, exp = 2.0):
+        '''
+        run_time: numpy array of running time
+        '''
 
+        baseline = run_time[np.argsort(run_time)[-3]]
+        #print("baseline : {}".format(baseline))
+        mask = np.where(run_time > baseline, 0, 1)
+        label = 1.0 / np.power(run_time, exp)
+        label = np.multiply(label, mask)
+        label = label / np.sum(label)
+        #print("label: {}".format(label))
+        return label
+
+
+    def to_bce_label_tensor(self, run_time, decay_factor = 0.9):
+        order = run_time.argsort()
+        rank = order.argsort()
+        mask = np.where(rank > 2, 0, 1)
+        label = np.power(decay_factor, rank)
+        label = np.multiply(label, mask)
+        return label
+
+
+    def to_mse_label_tensor(self, run_time):
+        label = self.run_time_normalize(run_time)
+        return label
+
+    def to_nll_label_tensor(self, key):
+        # labels for nll loss
+        label = np.zeros(shape=(1), dtype=np.int)
+        idx = self.label_map[self.labels[key][0]]
+        label[0] = idx
+        return label
+
+
+    def run_time_normalize(self, run_time):
+        min_time, max_time = np.min(run_time), np.max(run_time)
+        res = run_time - min_time / (max_time - min_time)
+        return res

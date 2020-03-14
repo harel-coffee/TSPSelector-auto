@@ -1,12 +1,13 @@
 import math
 
+
+import numpy as np
 import torch
 import torch.nn.functional as F
 from torch.nn.parameter import Parameter
-from torch.nn import BatchNorm1d, Linear
+from torch.nn import BatchNorm1d, Linear, BCEWithLogitsLoss, MSELoss
 from torch.nn.modules.module import Module
 from torch_geometric.nn.conv import MessagePassing
-
 class FC(Module):
     def __init__(self, in_ch, out_ch):
         super(FC, self).__init__()
@@ -131,4 +132,3 @@ class CGConv(MessagePassing):
         return '{}({}, {}, dim={})'.format(self.__class__.__name__,
                                            self.in_channels, self.out_channels,
                                            self.dim)
-

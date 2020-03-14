@@ -5,13 +5,12 @@ import pickle
 import random
 import numpy as np
 import math
-from torchvision.models import  alexnet, resnet18, vgg11, vgg11_bn, vgg16, vgg16_bn, resnet34, resnet50
 from InstanceLoader import *
 from transform import  *
 from torch.utils.data import DataLoader
 import torch.optim as optim
-from cnn import SimpleCNN
-
+from cnn import SimpleCNN, softCrossEntropy, WeightedMultiLabelBinaryClassification, WeightedMeanSquareError, WeightedNLLLoss
+from cnn import select_model, select_criterion
 
 
 def process_one_instance(data):
@@ -103,6 +102,7 @@ def compute_pred_performance(idx, run_time):
 
 
 def cnn_validate(args, model, dataloader):
+    loss_type = args.loss_type
     model.eval()
     num_instances = 0
     correct = 0
@@ -110,15 +110,31 @@ def cnn_validate(args, model, dataloader):
     pred_performance= 0.0
     best_performance = 0.0
     single_best_performance = 0.0
-    for i, (data, label, run_time) in enumerate(dataloader):
+    for i, (data, label, _, run_time) in enumerate(dataloader):
         if args.cuda:
             data, label = data.cuda(), label.cuda()
 
         outputs = model(data)
-        outputs = torch.nn.functional.log_softmax(outputs, dim=1)  # for resnet
+        if loss_type == 'sce' or loss_type == 'nll':
+            outputs = torch.nn.functional.log_softmax(outputs, dim=1)
+        elif loss_type == 'bce':
+            outputs = torch.nn.functional.sigmoid(outputs)
         outputs = outputs.squeeze()
 
-        idx = torch.argmax(outputs, dim = 1)
+        if loss_type == 'mse':
+            idx = torch.argmin(outputs, dim = 1)  # for mse loss
+        else :
+            idx = torch.argmax(outputs, dim = 1)
+        if loss_type == 'sce' or loss_type == 'bce':
+            label = torch.argmax(label, dim = 1)
+        elif loss_type == 'mse':
+            label = torch.argmin(label, dim=1)
+
+        #label = torch.argmax(label, dim = 1) # for soft cross entory, bce and mse
+        #idx = torch.argmin(outputs, dim = 1) # for mse loss
+        #label = torch.argmin(label, dim = 1)
+        #idx = torch.argmax(outputs, dim=1) # for nll loss
+
         correct += (idx == label.squeeze()).sum().item()
         num_instances += label.shape[0]
         # compute the real performance
@@ -175,25 +191,7 @@ def batch_train(args, model, train_dataloader, val_dataloader, optimizer, schedu
     print("finish training.")
     return model
 
-def generate_weights(outputs, run_time, exp = 2.0):
-    outputs = torch.nn.functional.log_softmax(outputs, dim=1)
-    idx = torch.argmax(outputs, dim=1)
-    idx, run_time = idx.cpu().numpy(), run_time.numpy()
-
-    weights = np.zeros(shape=(idx.shape[0]), dtype=np.float32)
-    for i in range(idx.shape[0]): # iterate for batch
-        wei = np.power(run_time[i], exp)  #weight normalization by classes
-        wei = wei / np.sum(wei)
-        weights[i] = wei[idx[i]]
-        #weights[i] = pow(run_time[i][idx[i]], exp)
-    #weights = weights / np.sum(weights)
-    #print(weights)
-    weights = torch.FloatTensor(weights)
-    return weights
-
-
-def cnn_train(args, model, train_dataloader, val_dataloader, optimizer, scheduler = None):
-    weight_exp = args.weight_exp
+def cnn_train(args, model, train_dataloader, val_dataloader, optimizer, criterion, scheduler = None):
     device = args.device
     if args.cuda:
         model.to(device)
@@ -203,29 +201,14 @@ def cnn_train(args, model, train_dataloader, val_dataloader, optimizer, schedule
     for epoch in range(args.epoches):
         total_loss = 0.0
         model.train()
-        for i, (data, label, run_time) in enumerate(train_dataloader):
+        for i, (data, label, weights, run_time) in enumerate(train_dataloader):
             if args.cuda:
-                data, label = data.cuda(), label.cuda()
+                data, label, weights = data.cuda(), label.cuda(), weights.cuda()
 
             optimizer.zero_grad()
             outputs = model(data)
-            label = label.reshape((label.shape[0]))
-            ''''
-            outputs = torch.nn.functional.log_softmax(outputs, dim=1)  # for cnn
-            label = label.reshape((label.shape[0]))
 
-            #print('output:',torch.argmax(outputs, dim = 1))
-            #print('label:', label.shape)
-
-            loss = torch.nn.functional.nll_loss(outputs, label)
-            '''
-            weights = generate_weights(outputs, run_time, weight_exp)
-            if args.cuda:
-                weights = weights.cuda()
-            criterion = torch.nn.CrossEntropyLoss(reduction= 'none')
-            loss = criterion(outputs, label)
-            loss = torch.dot(loss,  weights)
-
+            loss = criterion(outputs, label, weights)
             loss.backward()
             optimizer.step()
 
@@ -300,39 +283,6 @@ def main(args):
     model = batch_train(args, model, train_dataloader, val_dataloader, optimizer, scheduler)
 '''
 
-def select_model(args):
-    model_type = args.model_type
-    kwargs = {"num_classes" : args.num_classes}
-
-    if model_type == 'alexnet':
-        model = alexnet(pretrained=False, progress=True, **kwargs)
-    elif model_type == 'resnet18':
-        model = resnet18(pretrained=False, progress=True, **kwargs)
-    elif model_type == 'resnet34':
-        model = resnet34(pretrained=False, progress=True, **kwargs)
-    elif model_type == 'resnet50':
-        model = resnet50(pretrained=False, progress=True, **kwargs)
-    elif model_type == 'vgg11':
-        model = vgg11(pretrained=False, progress=True, **kwargs)
-    elif model_type == 'vgg11_bn':
-        model = vgg11_bn(pretrained=False, progress=True, **kwargs)
-    elif model_type == 'vgg16':
-        model = vgg16(pretrained=False, progress=True, **kwargs)
-    elif model_type == 'vgg16_bn':
-        model = vgg16_bn(pretrained=False, progress=True, **kwargs)
-    else:
-
-        model = SimpleCNN(num_classes= args.num_classes, num_cov_layer=args.num_cov_layer, channels= args.channels,
-                          kernel_size= args.kernel_size, stride= args.stride,
-                          num_mlp_layer=args.num_mlp_layer, mlp_hids= args.mlp_hids,
-                          adp_output_size=args.adp_output_size, dropout= args.dropout)
-
-        #model = SimpleCNN(num_classes=5)
-
-    if args.verbose:
-        print(model)
-    return model
-
 
 def build_transform(args):
     num_rotate = args.num_rotate
@@ -357,14 +307,15 @@ def main_cnn(args, train_dataset, val_dataset):
     train_dataloader = DataLoader(train_dataset, batch_size = batch_size, shuffle= True, num_workers = num_workers)
     val_dataloader = DataLoader(val_dataset, batch_size = 32, shuffle= False, num_workers = num_workers)
 
-    model = select_model(args)
+    model, criterion = select_model(args), select_criterion(args)
 
     optimizer = optim.Adam(model.parameters(),
                            lr=lr, weight_decay=weight_decay)
 
     scheduler = optim.lr_scheduler.ExponentialLR(optimizer, gamma=decay_factor)
 
-    _, max_train_acc, max_val_acc, best_train_performance, best_val_performance = cnn_train(args, model, train_dataloader, val_dataloader, optimizer, scheduler)
+    _, max_train_acc, max_val_acc, best_train_performance, best_val_performance = \
+        cnn_train(args, model, train_dataloader, val_dataloader, optimizer, criterion, scheduler)
     if args.verbose:
         print("max_train_accuracy={}".format(max_train_acc))
     print("max_val_accuracy={}".format(max_val_acc))
@@ -373,6 +324,7 @@ def main_cnn(args, train_dataset, val_dataset):
     return best_val_performance
 
 def cross_validation(args, num_fold = 5):
+
     instances_path = args.instances_path
     label_path = os.path.join(instances_path, 'algorithm_runs.arff.txt')
     labels = load_labels(label_path)
@@ -392,8 +344,8 @@ def cross_validation(args, num_fold = 5):
         train_keys = keys[: start] + keys[end:]
         train_labels = {k: labels[k] for k in train_keys}
         val_labels = {k: labels[k] for k in val_keys}
-        train_dataset = ArgumentDataset(instances_path, train_labels, train_transforms)
-        val_dataset = ArgumentDataset(instances_path, val_labels, val_transforms)
+        train_dataset = ArgumentDataset(args, instances_path, train_labels, train_transforms)
+        val_dataset = ArgumentDataset(args, instances_path, val_labels, val_transforms)
         if args.verbose:
             print("Fold {}: # training images: {}".format(i,train_dataset.num))
             print("Fold {}: # validation images: {}".format(i,val_dataset.num))
@@ -447,7 +399,8 @@ if __name__ == "__main__":
                         help="reduce the image resolution by scale_factor")
     parser.add_argument("--flip", default=True, type=bool)
     # Model Settings (ONLY FOR CNN)
-    parser.add_argument("--model_type", type=str, default='vgg16')
+    parser.add_argument("--model_type", type=str, default='resnet18')
+    parser.add_argument("--loss_type", type=str, default='nll')
     # Training settings
     parser.add_argument("--num_classes", default=5, type=int,
                         help="number of classes")
@@ -462,7 +415,7 @@ if __name__ == "__main__":
                         help='decay rate of (gamma).')
     parser.add_argument('--decay_patience', type=int, default=50,
                         help='num of epoches for one lr decay.')
-    parser.add_argument('--weight_exp', type=float, default=0.5,
+    parser.add_argument('--weight_exp', type=float, default=2.0,
                         help='loss weight exp factor.')
     parser.add_argument('--no-cuda', action='store_true', default=False,
                         help='Disables CUDA training.')
