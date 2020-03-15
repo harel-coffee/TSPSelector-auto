@@ -60,7 +60,7 @@ def summary():
                                                 v['alg'].decode("utf-8"),
                                                 repeat_index,
                                                 v['status'].decode("utf-8"),
-                                                v['runtime']))
+                                                round(v['runtime'], 2)))
 
     f.close()
 
