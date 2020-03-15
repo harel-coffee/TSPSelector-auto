@@ -51,16 +51,16 @@ def summary():
     f.write('ins_name,alg_name,repeat,status,runtime\n')
     for result_file in result_files:
         pm = np.load(open(result_file, 'rb'))
-    ins_size, repeat_times, algs_size = pm.shape
-    for ins_index in range(ins_size):
-        for alg_index in range(algs_size):
-            for repeat_index in range(repeat_times):
-                v = pm[ins_index, repeat_index, alg_index]
-                f.write('%s,%s,%d,%s,%.2f\n' % (v['ins_name'].decode("utf-8"),
-                                                v['alg'].decode("utf-8"),
-                                                repeat_index,
-                                                v['status'].decode("utf-8"),
-                                                round(v['runtime'], 2)))
+        ins_size, repeat_times, algs_size = pm.shape
+        for ins_index in range(ins_size):
+            for alg_index in range(algs_size):
+                for repeat_index in range(repeat_times):
+                    v = pm[ins_index, repeat_index, alg_index]
+                    f.write('%s,%s,%d,%s,%.2f\n' % (v['ins_name'].decode("utf-8"),
+                                                    v['alg'].decode("utf-8"),
+                                                    repeat_index,
+                                                    v['status'].decode("utf-8"),
+                                                    round(v['runtime'], 2)))
 
     f.close()
 
