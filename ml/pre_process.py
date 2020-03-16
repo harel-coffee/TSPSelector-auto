@@ -1,12 +1,14 @@
-# pre-prossess data
+# pre-proccess script for ECJ paper data
 # data structures: instance_name, feature, label
+import random as rd
+from glob import glob
 import pandas as pd
 import arff
 import numpy as np
 from sklearn.model_selection import train_test_split
 
 
-class create_labels(object):
+class create_labels_for_ECJ(object):
     def __init__(self, file, t_max=3600.0, pel=10, alg_num=5, rep_run=10):
         self.__file = file
         self.t_max = t_max
@@ -58,7 +60,7 @@ class create_labels(object):
         np.save('%slabels.npy' % out_dir, performance)
 
 
-def split(ratio=0.2, out_dir="../data/aslib_data-not_verified/TSP-ECJ2018/"):
+def split_for_ECJ(ratio=0.2, out_dir="../data/aslib_data-not_verified/TSP-ECJ2018/"):
     # read labels, features and costs for computing features
     labels = np.load(
         open("../data/aslib_data-not_verified/TSP-ECJ2018/labels.npy", 'rb'))
@@ -78,3 +80,54 @@ def split(ratio=0.2, out_dir="../data/aslib_data-not_verified/TSP-ECJ2018/"):
     print(X_train.index.values)
     np.savez('%strain_test_split' % out_dir,\
              train_index=X_train.index.values, test_index=X_test.index.values)
+
+
+class create_labels(object):
+    def __init__(self, t_max, penalize_factor, alg_num, repeat):
+        self.t_max = t_max
+        self.pel = penalize_factor
+        self.alg_num = alg_num
+        self.rep_run = repeat
+
+    def __call__(self):
+        # directly handle *_algorithm_runs.npy
+        out_dir = '../data/TSP/runs/'
+        result_files = glob('%s*_algorithm_runs*' % out_dir)
+        w = np.zeros((0, self.rep_run, self.alg_num),
+                     dtype=[('alg', 'S20'),
+                            ('ins_name', 'S100'), ('runtime', 'f8'),
+                            ('quality', 'f8'), ('status', 'S10')
+                            ])
+        for result in result_files:
+            pm = np.load(open(result, 'rb'))
+            w = np.vstack((w, pm))
+        print('Whole instance number', w.shape[0])
+
+        w['runtime'][w['status'] == b'TIMEOUT'] = self.t_max * self.pel
+
+        # t(runtime of each algorithm for each ins): shape(ins_num, alg_num)
+        t = np.median(np.round(w['runtime'], 2), axis=1)
+
+        # y(labels): shape(ins_num, 0)
+        y = np.zeros(w.shape[0], dtype=int)
+        for index, line in enumerate(t):
+            min_value = np.min(line)
+            min_L = []
+            for i, v in enumerate(line):
+                if v == min_value:
+                    min_L.append(i)
+            y[index] = rd.sample(min_L, 1)[0]
+
+        # X(features): shape(ins_num, feature_num)
+        df = pd.read_csv('../data/TSP/feature_values.csv')
+        X = np.zeros((w.shape[0], df.shape[1]-1))
+        for index in range(w.shape[0]):
+            X[index, ] = df[df['name'] == w[index, 0, 0]['ins_name'].decode("utf-8")].values[0, 1:]
+
+        # z(feature cost): shape(ins_num, )
+        df = pd.read_csv('../data/TSP/feature_computation_time.csv')
+        z = np.zeros((w.shape[0],))
+        for index in range(w.shape[0]):
+            z[index, ] = df[df['name'] == w[index, 0, 0]['ins_name'].decode("utf-8")].values[0, 1:]
+
+        return X, y, z, t

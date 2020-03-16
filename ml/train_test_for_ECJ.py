@@ -5,7 +5,7 @@ import numpy as np
 import arff
 from sklearn.svm import SVC as svc
 from sklearn.metrics import accuracy_score
-from selection import CutEstimator, par10
+from .feature_selection_for_ECJ import CutEstimator, par10
 
 if __name__ == '__main__':
     # train_test_split

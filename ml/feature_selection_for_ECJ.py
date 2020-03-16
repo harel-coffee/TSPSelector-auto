@@ -9,7 +9,6 @@ from sklearn.model_selection import KFold
 from sklearn.metrics import make_scorer
 from mlxtend.feature_selection.sequential_feature_selector import SequentialFeatureSelector
 
-
 class CutEstimator(BaseEstimator):
     def __init__(self, base_estimator):
         self.base_estimator = base_estimator
