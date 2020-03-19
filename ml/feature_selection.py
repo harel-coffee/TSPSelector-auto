@@ -50,6 +50,10 @@ if __name__ == "__main__":
     # random seed, related to train/test split and CV split
     seed = int(sys.argv[2])
     rd.seed(seed, version=2)
+
+    feature_num = sys.argv[3]
+    if feature_num != 'best':
+        feature_num = int(feature_num)
     # create_labels(t_max, penalize_factor, alg_num, repeat)
     cl = create_labels(900.0, 10, 6, 5)
     X, y, z, t = cl()
@@ -76,7 +80,7 @@ if __name__ == "__main__":
     scorer = make_scorer(par10, greater_is_better=False)
 
     # initialize sffs feature selector
-    selector = SequentialFeatureSelector(estimator=CutEstimator(classifier), k_features=16,
+    selector = SequentialFeatureSelector(estimator=CutEstimator(classifier), k_features=feature_num,
                                          forward=True, floating=True, verbose=2,
                                          scoring=scorer, cv=kf, n_jobs=n_cores,
                                          pre_dispatch='n_jobs', clone_estimator=True,
