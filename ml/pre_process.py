@@ -109,6 +109,7 @@ class create_labels(object):
         t = np.median(np.round(w['runtime'], 2), axis=1)
 
         # y(labels): shape(ins_num, 0)
+        count = 0
         y = np.zeros(w.shape[0], dtype=int)
         for index, line in enumerate(t):
             min_value = np.min(line)
@@ -116,6 +117,8 @@ class create_labels(object):
             for i, v in enumerate(line):
                 if v == min_value:
                     min_L.append(i)
+            if len(min_L) > 1:
+                count += 1
             y[index] = rd.sample(min_L, 1)[0]
 
         # X(features): shape(ins_num, feature_num)
@@ -130,4 +133,10 @@ class create_labels(object):
         for index in range(w.shape[0]):
             z[index, ] = df[df['name'] == w[index, 0, 0]['ins_name'].decode("utf-8")].values[0, 1:]
 
+        print('count of sharing optimal performance', count)
+
         return X, y, z, t
+
+# if __name__ == '__main__':
+#     cl = create_labels(900.0, 10, 6, 5)
+#     cl()

@@ -1,6 +1,7 @@
 # sequential floating feature selection and feature selection and RBF-kernel SVM
 import sys
 import pickle
+import random as rd
 import numpy as np
 import pandas as pd
 from sklearn.base import BaseEstimator, clone
@@ -8,7 +9,7 @@ from sklearn.svm import SVC as svc
 from sklearn.model_selection import KFold, train_test_split
 from sklearn.metrics import make_scorer, accuracy_score
 from mlxtend.feature_selection.sequential_feature_selector import SequentialFeatureSelector
-from .pre_process import create_labels
+from pre_process import create_labels
 
 
 class CutEstimator(BaseEstimator):
@@ -48,6 +49,7 @@ if __name__ == "__main__":
     n_cores = int(sys.argv[1])
     # random seed, related to train/test split and CV split
     seed = int(sys.argv[2])
+    rd.seed(seed, version=2)
     # create_labels(t_max, penalize_factor, alg_num, repeat)
     cl = create_labels(900.0, 10, 6, 5)
     X, y, z, t = cl()
