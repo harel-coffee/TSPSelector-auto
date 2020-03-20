@@ -1,4 +1,0 @@
-for each kind of instances
-    using Phirea (on Windows) exe compute features
-    rename n.tsp -> data/%s/n.tsp % option
-    extract computation time -> save in a new file
