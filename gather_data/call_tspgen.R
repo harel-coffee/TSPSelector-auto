@@ -17,6 +17,7 @@ points.lower <- as.integer(args[2])
 points.upper <- as.integer(args[3])
 ins.num <- as.integer(args[4])
 seed <- as.integer(args[5])
+choice <- toString(args[6])
 
 set.seed(seed)
 
@@ -64,7 +65,13 @@ for (i in 1:ins.num)
     x$coords = relocateDuplicates(x$coords)
     x$lower = 0
     x$upper = 1000000
-
-    name = sprintf("../data/TSP/%s/%d.tsp", operator, i)
+    if (choice == "normal")
+    {
+        name = sprintf("../data/TSP/%s/%d.tsp", operator, i)
+    }
+    if (choice == "additional")
+    {
+        name = sprintf("../data/TSP/additional/%s/%d.tsp", operator, i)
+    }
     exportToTSPlibFormat(x, name, use.extended.format=FALSE)
 }

@@ -1,8 +1,8 @@
 import random as rd
 import subprocess
+import sys
 
-
-if __name__ == '__main__':
+def generate():
     rd.seed(42)
     # generate rue instances
     rue_generator = '../../../projects/ACPP/instance_set/TSP/generator/portgen'
@@ -42,9 +42,27 @@ if __name__ == '__main__':
         f.write('%s Instances \n' % operator)
         seed = rd.randint(1, 1000000)
         # Rscript call_tspgen.R operator point_lower point_upper ins_num seed
-        cmd = 'Rscript call_tspgen.R %s %d %d %d %d' %\
-              (operator, 500, 2000, num_mutation, seed)
+        cmd = 'Rscript call_tspgen.R %s %d %d %d %d %s' %\
+              (operator, 500, 2000, num_mutation, seed, 'normal')
         pid = subprocess.Popen(cmd, shell=True)
         pid.wait()
         f.write('%s\n' % cmd)
     f.close()
+
+def generate_additional():
+    rd.seed(13)
+    opts = ['expansion', 'linearprojection', 'grid']
+    num_mutation = 5000
+    for opt in opts:
+        seed = rd.randint(1, 1000000)
+        cmd = 'Rscript call_tspgen.R %s %d %d %d %d %s' %\
+            (opt, 1000, 2000, num_mutation, seed, 'additional')
+        pid = subprocess.Popen(cmd, shell=True)
+        pid.wait()
+
+
+if __name__ == '__main__':
+    if len(sys.argv) > 1:
+        generate_additional()
+    else:
+        generate()
