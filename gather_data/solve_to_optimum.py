@@ -12,7 +12,7 @@ def solve(option, parallism):
 
     running_tasks = 0
     sub_process = set()
-    solver_path = '../../ACPP/Solver/Concorde/concorde -x'
+    solver_path = '../solver/Concorde/concorde -x'
     start_time = time.time()
 
     for i in range(setSize):
