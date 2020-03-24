@@ -1,6 +1,7 @@
 '''
 solve all instances with concorde
 '''
+import os
 import sys
 import time
 import subprocess
@@ -92,6 +93,8 @@ def extract_additional():
             solutionFile = '%s%s_%d' % (
                 '../data/TSP/additional/optimal_solutions/', option, i+1)
             insFile = '%s%d.tsp' % (instancePath, i+1)
+            if not os.path.isfile(solutionFile):
+                continue
             with open(solutionFile, 'r') as f:
                 lines = f.readlines()
                 for line in lines:
@@ -117,6 +120,8 @@ def extract():
         for i in range(setSize):
             solutionFile = '%s%s_%d' % ('../data/TSP/optimal_solutions/', option, i+1)
             insFile = '%s%d.tsp' % (instancePath, i+1)
+            if not os.path.isfile(solutionFile):
+                continue
             with open(solutionFile, 'r') as f:
                 lines = f.readlines()
                 for line in lines:

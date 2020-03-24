@@ -70,12 +70,18 @@ if __name__ == '__main__':
     # for each algorithm, we run it on each instance for three times
     os.chdir('..')
     maxParalism = int(sys.argv[1])
-    options = sys.argv[2:]
+    if sys.argv[2] == "additional":
+        options = sys.argv[3:]
+    else:
+        options = sys.argv[2:]
 
     seeds = [0, 42, 64, 128, 1024]
     repeat = len(seeds)
     cutoff_time = 900
-    result_dir = 'data/TSP/runs/'
+    if sys.argv[2] == "additional":
+        result_dir = 'data/TSP/additional/runs/'
+    else:
+        result_dir = 'data/TSP/runs/'
 
     # instances = []
     # instances.extend(glob('data/TSP/RUE/*'))
@@ -89,28 +95,32 @@ if __name__ == '__main__':
     # instances.extend(glob('data/TSP/linearprojection/*'))
     # instances.extend(glob('data/TSP/grid/*'))
     for option in options:
-        output_dir = 'data/TSP/runs/%s/' % option
+        output_dir = '%s%s/' % (result_dir, option)
         if not os.path.isdir(output_dir):
             os.mkdir(output_dir)
-
-        instances = glob('data/TSP/%s/*' % option)
+        if sys.argv[2] == "additional":
+            instances = glob('data/TSP/additional/%s/*' % option)
+            optima = "data/TSP/additional/optimum.json"
+        else:
+            instances = glob('data/TSP/%s/*' % option)
+            optima = "data/TSP/optimum.json"
         ins_num = len(instances)
 
         algos = []
         algos.append(("LKH", "python -u solver/LKH/wrapper.py --mem-limit 2048"
-                             " --solutionity data/TSP/optimum.json "))
+                             " --solutionity %s " % optima))
         algos.append(("LKH-restart", "python -u solver/LKH-restart/wrapper.py --mem-limit 2048"
-                                     " --solutionity data/TSP/optimum.json "))
+                                     " --solutionity %s " % optima))
         algos.append(("LKH-crossover", "python -u solver/LKH-crossover/wrapper.py --mem-limit 2048"
-                                       " --solutionity data/TSP/optimum.json "))
+                                       " --solutionity %s " % optima))
         algos.append(("GA-EAX", "python -u solver/GA-EAX/wrapper.py --mem-limit 2048"
-                                " --solutionity data/TSP/optimum.json "))
+                                " --solutionity %s " % optima))
         algos.append(("GA-EAX-restart", "python -u solver/GA-EAX-restart/wrapper.py "
                                         "--mem-limit 2048"
-                                        " --solutionity data/TSP/optimum.json "))
+                                        " --solutionity %s " % optima))
         # memory control of MAOS is done by jvm
         algos.append(("MAOS", "python -u solver/MAOS-TSP/wrapper.py "
-                              " --solutionity data/TSP/optimum.json "))
+                              " --solutionity %s " % optima))
         alg_num = len(algos)
 
         algorithm_runs = np.zeros((ins_num, repeat, alg_num),
