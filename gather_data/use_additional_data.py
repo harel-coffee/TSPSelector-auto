@@ -22,7 +22,7 @@ ex_diff_argsort = np.argsort(ex_diff)
 ex_add_diff = ex_add_median[:, 4] - ex_add_median[:, 5]
 ex_add_diff_argsort = np.argsort(ex_add_diff)
 
-rep_num = 100
+rep_num = 200
 start = 10
 with open('data/TSP/runs/%s_algorithm_runs.npy' % option, 'rb') as f:
     ex_new = np.load(f)
@@ -32,6 +32,15 @@ for i in range(1, rep_num+1):
     index_2 = ex_add_diff_argsort[-i]
     ex_new[index_1, :, :] = ex_add[index_2, :, :]
 
+ex_new['runtime'][ex_new['status'] == b'TIMEOUT'] = 9000.0
+ex_new_median = np.median(ex_new['runtime'], axis=1)
+count = 0
+for i in range(ex_new_median.shape[0]):
+    if np.min(ex_new_median[i, :]) == 9000.0:
+        index_2 = ex_add_diff_argsort[-rep_num-count-1]
+        ex_new[i, :, :] = ex_add[index_2, :, :]
+        count += 1
+print("%d instances, vbs with timeout\n" % count)
 ex_new['runtime'][ex_new['status'] == b'TIMEOUT'] = 900.0
 
 with open('data/TSP/optimum.json', 'r') as f:
@@ -57,5 +66,5 @@ for i in range(ex_new.shape[0]):
         old_opt[old_file.decode('utf-8')] = new_opt[new_file.decode('utf-8')]
 
 np.save('new_algorithm_runs', ex_new)
-with open('new_optimum', 'w+') as f:
+with open('new_optimum.json', 'w+') as f:
     json.dump(old_opt, f)
