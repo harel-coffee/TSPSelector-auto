@@ -61,3 +61,5 @@ solver/LKH/paramfile
 solver/LKH/LKH
 feature_compute
 solver/MAOS-TSP/myprojects
+data/TSP/test_instance_id.txt
+data/TSP/train_instance_id.txt

@@ -3,7 +3,7 @@ import subprocess
 import json
 import numpy as np
 
-option = 'linearprojection'
+option = 'expansion'
 
 os.chdir('../')
 with open('data/TSP/runs/%s_algorithm_runs.npy' % option, 'rb') as f:
@@ -22,7 +22,7 @@ ex_diff_argsort = np.argsort(ex_diff)
 ex_add_diff = ex_add_median[:, 4] - ex_add_median[:, 5]
 ex_add_diff_argsort = np.argsort(ex_add_diff)
 
-rep_num = 201
+rep_num = 200
 start = 10
 with open('data/TSP/runs/%s_algorithm_runs.npy' % option, 'rb') as f:
     ex_new = np.load(f)
@@ -33,14 +33,14 @@ for i in range(1, rep_num):
     ex_new[index_1, :, :] = ex_add[index_2, :, :]
 
 # insert GA-EAX-restart timeout
-results = np.argwhere(ex_add_median[:, 4] == 9000.0)
-results = results.reshape(results.shape[0])
-for index_2 in results:
-    if index_2 in ex_add_diff_argsort[-rep_num:]:
-        continue
-    index_1 = ex_diff_argsort[rep_num-1+start]
-    ex_new[index_1, :, :] = ex_add[index_2, :, :]
-    rep_num += 1
+# results = np.argwhere(ex_add_median[:, 4] == 9000.0)
+# results = results.reshape(results.shape[0])
+# for index_2 in results:
+#     if index_2 in ex_add_diff_argsort[-rep_num:]:
+#         continue
+#     index_1 = ex_diff_argsort[rep_num-1+start]
+#     ex_new[index_1, :, :] = ex_add[index_2, :, :]
+#     rep_num += 1
 
 ex_new['runtime'][ex_new['status'] == b'TIMEOUT'] = 9000.0
 ex_new_median = np.median(ex_new['runtime'], axis=1)

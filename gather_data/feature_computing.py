@@ -4,7 +4,8 @@ import subprocess
 # for each kind of instances
 #     using Phirea (on Windows) exe compute features
 #     rename n.tsp -> data/%s/n.tsp % option
-#     extract computation time -> save in a new file
+#     extract computation time (last column) -> save in feature_computation_time.csv
+#     the remaining contenes -> feature_values.csv
 
 # UBC-cheap features 288-300, 13 in total
 # UBC features 288-337, 50 in total
@@ -12,7 +13,7 @@ def ubc():
     binary = 'gather_data/feature_compute/UBC/TSP-feature -all'
     flag = False
     print('ubc')
-    for i, line in enumerate(feature_lines[1:3]):
+    for i, line in enumerate(feature_lines[1:]):
         ins = line.split(',')[0]
         print(ins)
         cmd = '%s %s > tmp.txt' % (binary, ins)
