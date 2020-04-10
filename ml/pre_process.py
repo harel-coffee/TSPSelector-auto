@@ -1,7 +1,7 @@
 # pre-proccess script for ECJ paper data
 # data structures: instance_name, feature, label
 import random as rd
-from glob import glob
+from copy import deepcopy
 import pandas as pd
 import arff
 import numpy as np
@@ -83,16 +83,23 @@ def split_for_ECJ(ratio=0.2, out_dir="../data/aslib_data-not_verified/TSP-ECJ201
 
 
 class create_labels(object):
-    def __init__(self, t_max, penalize_factor, alg_num, repeat):
+    def __init__(self, t_max, penalize_factor, alg_num, repeat, method):
         self.t_max = t_max
         self.pel = penalize_factor
         self.alg_num = alg_num
         self.rep_run = repeat
+        self.method = method
 
     def __call__(self):
         # directly handle *_algorithm_runs.npy
-        out_dir = '../data/TSP/runs/'
-        result_files = glob('%s*_algorithm_runs*' % out_dir)
+        # out_dir = '../data/TSP/runs/'
+        # result_files = glob('%s*_algorithm_runs*' % out_dir)
+        result_files = ['../data/TSP/runs/RUE_algorithm_runs.npy',
+                        '../data/TSP/runs/explosion_algorithm_runs.npy',
+                        '../data/TSP/runs/grid_algorithm_runs.npy',
+                        '../data/TSP/runs/cluster_algorithm_runs.npy',
+                        '../data/TSP/runs/implosion_algorithm_runs.npy',
+                        '../data/TSP/runs/expansion_algorithm_runs.npy']
         w = np.zeros((0, self.rep_run, self.alg_num),
                      dtype=[('alg', 'S20'),
                             ('ins_name', 'S100'), ('runtime', 'f8'),
@@ -108,9 +115,40 @@ class create_labels(object):
         # t(runtime of each algorithm for each ins): shape(ins_num, alg_num)
         t = np.median(np.round(w['runtime'], 2), axis=1)
 
-        # y(labels): shape(ins_num, 0)
+        # X(features): shape(ins_num, feature_num)
+        df = pd.read_csv('../data/TSP/all_feature_values.csv')
+        X = np.zeros((w.shape[0], df.shape[1]-1))
+        name_index_dict = dict()
+        for index in range(w.shape[0]):
+            if index == w.shape[0] - 1:
+                print(" ")
+            X[index, ] = df[df['name'] == w[index, 0, 0]['ins_name'].decode("utf-8")].values[0, 1:]
+            name_index_dict[w[index, 0, 0]['ins_name'].decode("utf-8")] = index
+
+        # train_index/test_index: shape(ins_num, )
+        with open('../data/TSP/train_instance_id.txt', 'r') as f:
+            train_insts = f.read().strip().split('\n')
+        with open('../data/TSP/test_instance_id.txt', 'r') as f:
+            test_insts = f.read().strip().split('\n')
+
+        train_index = [name_index_dict[ins_name] for ins_name in train_insts]
+        test_index = [name_index_dict[ins_name] for ins_name in test_insts]
+        train_index = np.array(train_index)
+        test_index = np.array(test_index)
+
+        # z(feature cost): shape(ins_num, feature_type_num)
+        df = pd.read_csv('../data/TSP/all_feature_computation_time.csv')
+        z = np.zeros((w.shape[0], df.shape[1]-1))
+        for index in range(w.shape[0]):
+            z[index, ] = df[df['name'] == w[index, 0, 0]['ins_name'].decode("utf-8")].values[0, 1:]
+
+        if self.method == 'regression':
+            # y: shape(ins_num, alg_num)
+            y = deepcopy(t)
+
+        # labels: shape(ins_num, )
         count = 0
-        y = np.zeros(w.shape[0], dtype=int)
+        labels = np.zeros(w.shape[0], dtype=int)
         for index, line in enumerate(t):
             min_value = np.min(line)
             min_L = []
@@ -119,23 +157,21 @@ class create_labels(object):
                     min_L.append(i)
             if len(min_L) > 1:
                 count += 1
-            y[index] = rd.sample(min_L, 1)[0]
+            labels[index] = rd.sample(min_L, 1)[0]
 
-        # X(features): shape(ins_num, feature_num)
-        df = pd.read_csv('../data/TSP/feature_values.csv')
-        X = np.zeros((w.shape[0], df.shape[1]-1))
-        for index in range(w.shape[0]):
-            X[index, ] = df[df['name'] == w[index, 0, 0]['ins_name'].decode("utf-8")].values[0, 1:]
+        if self.method == 'classification':
+            y = deepcopy(labels)
 
-        # z(feature cost): shape(ins_num, )
-        df = pd.read_csv('../data/TSP/feature_computation_time.csv')
-        z = np.zeros((w.shape[0],))
-        for index in range(w.shape[0]):
-            z[index, ] = df[df['name'] == w[index, 0, 0]['ins_name'].decode("utf-8")].values[0, 1:]
+        if self.method == 'paired-regression':
+            # y: shape(ins_num, class_num*(class_num-1)/2)
+            y = np.zeros((t.shape[0], int(t.shape[1]*(t.shape[1]-1)/2)))
+            index = 0
+            for i in range(t.shape[1]):
+                for j in range(i+1, t.shape[1]):
+                    y[:, index] = t[:, i] - t[:, j]
+                    index += 1
 
-        print('count of sharing optimal performance', count)
-
-        return X, y, z, t
+        return X, y, z, t, labels, train_index, test_index
 
 # if __name__ == '__main__':
 #     cl = create_labels(900.0, 10, 6, 5)

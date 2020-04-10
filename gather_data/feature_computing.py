@@ -79,7 +79,7 @@ if __name__ == '__main__':
                     (cost_lines[0], 'UBC_cheap_time', 'UBC_time', 'TSPmeta_time')
 
     ubc()
-    tsp_meta()
+    # tsp_meta()
 
     with open('data/TSP/all_feature_values.csv', 'w+') as f:
         f.writelines(feature_lines)
