@@ -49,8 +49,6 @@ data/TSP/additional/runs/expansion
 data/TSP/additional/runs/cluster
 data/TSP/additional/runs/compression
 data/TSP/additional/optimal_solutions
-ml/selector
-ml/classifier
 ml/__pycache__
 .vscode
 solver/GA-EAX/bin

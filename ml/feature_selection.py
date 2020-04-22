@@ -157,26 +157,26 @@ if __name__ == "__main__":
                 # initialize sffs feature selector
                 if method == 'classification':
                     selector = SequentialFeatureSelector(estimator=CutClassifier(model),
-                                                         k_features=feature_num,
-                                                         forward=True, floating=True, verbose=1,
+                                                         k_features=min(feature_num, X.shape[1]),
+                                                         forward=True, floating=True, verbose=2,
                                                          scoring=scorer, cv=kf, n_jobs=n_cores,
-                                                         pre_dispatch='n_jobs',
+                                                         pre_dispatch='2*n_jobs',
                                                          clone_estimator=True,
                                                          fixed_features=None)
                 elif method == 'regression':
                     selector = SequentialFeatureSelector(estimator=CutRegressor(model),
-                                                         k_features=feature_num,
-                                                         forward=True, floating=True, verbose=1,
+                                                         k_features=min(feature_num, X.shape[1]),
+                                                         forward=True, floating=True, verbose=2,
                                                          scoring=scorer, cv=kf, n_jobs=n_cores,
-                                                         pre_dispatch='n_jobs',
+                                                         pre_dispatch='2*n_jobs',
                                                          clone_estimator=True,
                                                          fixed_features=None)
                 elif method == 'paired-regression':
                     selector = SequentialFeatureSelector(estimator=CutPairedRegressor(model),
-                                                         k_features=feature_num,
-                                                         forward=True, floating=True, verbose=1,
+                                                         k_features=min(feature_num, X.shape[1]),
+                                                         forward=True, floating=True, verbose=2,
                                                          scoring=scorer, cv=kf, n_jobs=n_cores,
-                                                         pre_dispatch='n_jobs',
+                                                         pre_dispatch='2*n_jobs',
                                                          clone_estimator=True,
                                                          fixed_features=None)
 
@@ -250,5 +250,5 @@ if __name__ == "__main__":
                                        enumerate(test_index)]) / label_test_pred.shape[0]
                 f.write('mean_rank_test: %f\n' % round(mean_rank_test, 2))
                 f.write('not_worse_than_sbs_test: %f\n' % better_sbs_test)
-
+                f.flush()
     f.close()

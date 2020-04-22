@@ -1,0 +1,879 @@
+------------------------------------------------------------------
+method=classification, learner=dtc, feature-set=Phiera, time=962.7582364082336
+-----------------------------Train--------------------------------
+Train acc: 0.577143 Train Par10: 130.490000
+The portion of each predicted class on training set:
+LKH (label 0): 0.394286
+LKH.restart (label 1): 0.038571
+LKH.crossover (label 2): 0.204762
+EAX (label 3): 0.113810
+EAX.restart (label 4): 0.156667
+MAOS (label 5): 0.091905
+mean_rank_train: 2.080000
+not_worse_than_sbs_train: 0.806429
+-----------------------------Test--------------------------------
+Test acc: 0.265000 Test Par10: 378.767000
+The portion of each predicted class on test set:
+LKH (label 0): 0.388333
+LKH.restart (label 1): 0.036111
+LKH.crossover (label 2): 0.219444
+EAX (label 3): 0.116667
+EAX.restart (label 4): 0.151667
+MAOS (label 5): 0.087778
+mean_rank_test: 2.800000
+not_worse_than_sbs_test: 0.656111
+------------------------------------------------------------------
+method=classification, learner=rfc, feature-set=Phiera, time=1451.5993604660034
+-----------------------------Train--------------------------------
+Train acc: 1.000000 Train Par10: 16.373000
+The portion of each predicted class on training set:
+LKH (label 0): 0.202143
+LKH.restart (label 1): 0.098095
+LKH.crossover (label 2): 0.199286
+EAX (label 3): 0.208810
+EAX.restart (label 4): 0.159524
+MAOS (label 5): 0.132143
+mean_rank_train: 1.000000
+not_worse_than_sbs_train: 1.000000
+-----------------------------Test--------------------------------
+Test acc: 0.304444 Test Par10: 517.595000
+The portion of each predicted class on test set:
+LKH (label 0): 0.285000
+LKH.restart (label 1): 0.040000
+LKH.crossover (label 2): 0.258333
+EAX (label 3): 0.220000
+EAX.restart (label 4): 0.103333
+MAOS (label 5): 0.093333
+mean_rank_test: 2.740000
+not_worse_than_sbs_test: 0.648889
+------------------------------------------------------------------
+method=classification, learner=svc, feature-set=Phiera, time=6434.28813290596
+-----------------------------Train--------------------------------
+Train acc: 0.303333 Train Par10: 853.361000
+The portion of each predicted class on training set:
+LKH (label 0): 0.106667
+LKH.restart (label 1): 0.000000
+LKH.crossover (label 2): 0.289048
+EAX (label 3): 0.376667
+EAX.restart (label 4): 0.118095
+MAOS (label 5): 0.109524
+mean_rank_train: 2.870000
+not_worse_than_sbs_train: 0.640476
+-----------------------------Test--------------------------------
+Test acc: 0.292222 Test Par10: 821.424000
+The portion of each predicted class on test set:
+LKH (label 0): 0.116111
+LKH.restart (label 1): 0.000000
+LKH.crossover (label 2): 0.270000
+EAX (label 3): 0.392778
+EAX.restart (label 4): 0.109444
+MAOS (label 5): 0.111667
+mean_rank_test: 2.910000
+not_worse_than_sbs_test: 0.640556
+------------------------------------------------------------------
+method=classification, learner=dtc, feature-set=UBC-cheap, time=44.13092637062073
+-----------------------------Train--------------------------------
+Train acc: 1.000000 Train Par10: 16.445000
+The portion of each predicted class on training set:
+LKH (label 0): 0.202143
+LKH.restart (label 1): 0.098095
+LKH.crossover (label 2): 0.199286
+EAX (label 3): 0.208810
+EAX.restart (label 4): 0.159524
+MAOS (label 5): 0.132143
+mean_rank_train: 1.000000
+not_worse_than_sbs_train: 1.000000
+-----------------------------Test--------------------------------
+Test acc: 0.266667 Test Par10: 557.189000
+The portion of each predicted class on test set:
+LKH (label 0): 0.201667
+LKH.restart (label 1): 0.089444
+LKH.crossover (label 2): 0.197222
+EAX (label 3): 0.207778
+EAX.restart (label 4): 0.167778
+MAOS (label 5): 0.136111
+mean_rank_test: 2.970000
+not_worse_than_sbs_test: 0.643889
+------------------------------------------------------------------
+method=classification, learner=rfc, feature-set=UBC-cheap, time=197.42572784423828
+-----------------------------Train--------------------------------
+Train acc: 1.000000 Train Par10: 16.445000
+The portion of each predicted class on training set:
+LKH (label 0): 0.202143
+LKH.restart (label 1): 0.098095
+LKH.crossover (label 2): 0.199286
+EAX (label 3): 0.208810
+EAX.restart (label 4): 0.159524
+MAOS (label 5): 0.132143
+mean_rank_train: 1.000000
+not_worse_than_sbs_train: 1.000000
+-----------------------------Test--------------------------------
+Test acc: 0.295000 Test Par10: 517.887000
+The portion of each predicted class on test set:
+LKH (label 0): 0.269444
+LKH.restart (label 1): 0.033333
+LKH.crossover (label 2): 0.275000
+EAX (label 3): 0.208889
+EAX.restart (label 4): 0.120000
+MAOS (label 5): 0.093333
+mean_rank_test: 2.760000
+not_worse_than_sbs_test: 0.662222
+------------------------------------------------------------------
+method=classification, learner=svc, feature-set=UBC-cheap, time=104.97399187088013
+-----------------------------Train--------------------------------
+Train acc: 0.265000 Train Par10: 462.342000
+The portion of each predicted class on training set:
+LKH (label 0): 0.654762
+LKH.restart (label 1): 0.000000
+LKH.crossover (label 2): 0.000000
+EAX (label 3): 0.126190
+EAX.restart (label 4): 0.000000
+MAOS (label 5): 0.219048
+mean_rank_train: 2.980000
+not_worse_than_sbs_train: 0.543095
+-----------------------------Test--------------------------------
+Test acc: 0.264444 Test Par10: 389.797000
+The portion of each predicted class on test set:
+LKH (label 0): 0.651667
+LKH.restart (label 1): 0.000000
+LKH.crossover (label 2): 0.000000
+EAX (label 3): 0.138889
+EAX.restart (label 4): 0.000000
+MAOS (label 5): 0.209444
+mean_rank_test: 2.920000
+not_worse_than_sbs_test: 0.545000
+------------------------------------------------------------------
+method=classification, learner=dtc, feature-set=UBC, time=331.1794910430908
+-----------------------------Train--------------------------------
+Train acc: 1.000000 Train Par10: 28.065000
+The portion of each predicted class on training set:
+LKH (label 0): 0.202143
+LKH.restart (label 1): 0.098095
+LKH.crossover (label 2): 0.199286
+EAX (label 3): 0.208810
+EAX.restart (label 4): 0.159524
+MAOS (label 5): 0.132143
+mean_rank_train: 1.000000
+not_worse_than_sbs_train: 1.000000
+-----------------------------Test--------------------------------
+Test acc: 0.250556 Test Par10: 656.249000
+The portion of each predicted class on test set:
+LKH (label 0): 0.204444
+LKH.restart (label 1): 0.097778
+LKH.crossover (label 2): 0.192778
+EAX (label 3): 0.232222
+EAX.restart (label 4): 0.163333
+MAOS (label 5): 0.109444
+mean_rank_test: 2.940000
+not_worse_than_sbs_test: 0.645000
+------------------------------------------------------------------
+method=classification, learner=rfc, feature-set=UBC, time=1679.1893634796143
+-----------------------------Train--------------------------------
+Train acc: 1.000000 Train Par10: 28.065000
+The portion of each predicted class on training set:
+LKH (label 0): 0.202143
+LKH.restart (label 1): 0.098095
+LKH.crossover (label 2): 0.199286
+EAX (label 3): 0.208810
+EAX.restart (label 4): 0.159524
+MAOS (label 5): 0.132143
+mean_rank_train: 1.000000
+not_worse_than_sbs_train: 1.000000
+-----------------------------Test--------------------------------
+Test acc: 0.312778 Test Par10: 552.533000
+The portion of each predicted class on test set:
+LKH (label 0): 0.292222
+LKH.restart (label 1): 0.020556
+LKH.crossover (label 2): 0.265556
+EAX (label 3): 0.220556
+EAX.restart (label 4): 0.115556
+MAOS (label 5): 0.085556
+mean_rank_test: 2.690000
+not_worse_than_sbs_test: 0.673333
+------------------------------------------------------------------
+method=classification, learner=svc, feature-set=UBC, time=1178.3895211219788
+-----------------------------Train--------------------------------
+Train acc: 0.218095 Train Par10: 2653.629000
+The portion of each predicted class on training set:
+LKH (label 0): 0.017381
+LKH.restart (label 1): 0.001429
+LKH.crossover (label 2): 0.005476
+EAX (label 3): 0.975238
+EAX.restart (label 4): 0.000476
+MAOS (label 5): 0.000000
+mean_rank_train: 3.560000
+not_worse_than_sbs_train: 0.492143
+-----------------------------Test--------------------------------
+Test acc: 0.217222 Test Par10: 2597.960000
+The portion of each predicted class on test set:
+LKH (label 0): 0.021111
+LKH.restart (label 1): 0.002222
+LKH.crossover (label 2): 0.004444
+EAX (label 3): 0.972222
+EAX.restart (label 4): 0.000000
+MAOS (label 5): 0.000000
+mean_rank_test: 3.580000
+not_worse_than_sbs_test: 0.478333
+------------------------------------------------------------------
+method=classification, learner=dtc, feature-set=All, time=955.9683663845062
+-----------------------------Train--------------------------------
+Train acc: 0.577143 Train Par10: 142.255000
+The portion of each predicted class on training set:
+LKH (label 0): 0.394286
+LKH.restart (label 1): 0.038571
+LKH.crossover (label 2): 0.204762
+EAX (label 3): 0.113810
+EAX.restart (label 4): 0.156667
+MAOS (label 5): 0.091905
+mean_rank_train: 2.080000
+not_worse_than_sbs_train: 0.806429
+-----------------------------Test--------------------------------
+Test acc: 0.267778 Test Par10: 409.870000
+The portion of each predicted class on test set:
+LKH (label 0): 0.383889
+LKH.restart (label 1): 0.037222
+LKH.crossover (label 2): 0.222222
+EAX (label 3): 0.120000
+EAX.restart (label 4): 0.153889
+MAOS (label 5): 0.082778
+mean_rank_test: 2.810000
+not_worse_than_sbs_test: 0.657222
+------------------------------------------------------------------
+method=classification, learner=rfc, feature-set=All, time=1707.711040019989
+-----------------------------Train--------------------------------
+Train acc: 1.000000 Train Par10: 28.138000
+The portion of each predicted class on training set:
+LKH (label 0): 0.202143
+LKH.restart (label 1): 0.098095
+LKH.crossover (label 2): 0.199286
+EAX (label 3): 0.208810
+EAX.restart (label 4): 0.159524
+MAOS (label 5): 0.132143
+mean_rank_train: 1.000000
+not_worse_than_sbs_train: 1.000000
+-----------------------------Test--------------------------------
+Test acc: 0.296667 Test Par10: 509.720000
+The portion of each predicted class on test set:
+LKH (label 0): 0.281667
+LKH.restart (label 1): 0.037222
+LKH.crossover (label 2): 0.259444
+EAX (label 3): 0.220556
+EAX.restart (label 4): 0.111111
+MAOS (label 5): 0.090000
+mean_rank_test: 2.780000
+not_worse_than_sbs_test: 0.656111
+------------------------------------------------------------------
+method=classification, learner=svc, feature-set=All, time=6453.396039009094
+-----------------------------Train--------------------------------
+Train acc: 0.303333 Train Par10: 865.126000
+The portion of each predicted class on training set:
+LKH (label 0): 0.106667
+LKH.restart (label 1): 0.000000
+LKH.crossover (label 2): 0.289048
+EAX (label 3): 0.376667
+EAX.restart (label 4): 0.118095
+MAOS (label 5): 0.109524
+mean_rank_train: 2.870000
+not_worse_than_sbs_train: 0.640476
+-----------------------------Test--------------------------------
+Test acc: 0.292222 Test Par10: 833.099000
+The portion of each predicted class on test set:
+LKH (label 0): 0.116111
+LKH.restart (label 1): 0.000000
+LKH.crossover (label 2): 0.270000
+EAX (label 3): 0.392778
+EAX.restart (label 4): 0.109444
+MAOS (label 5): 0.111667
+mean_rank_test: 2.910000
+not_worse_than_sbs_test: 0.640556
+------------------------------------------------------------------
+method=regression, learner=dtr, feature-set=Phiera, time=1389.3528621196747
+-----------------------------Train--------------------------------
+Train acc: 0.538571 Train Par10: 54.453000
+The portion of each predicted class on training set:
+LKH (label 0): 0.138333
+LKH.restart (label 1): 0.106905
+LKH.crossover (label 2): 0.151667
+EAX (label 3): 0.142381
+EAX.restart (label 4): 0.349286
+MAOS (label 5): 0.111429
+mean_rank_train: 2.170000
+not_worse_than_sbs_train: 0.898095
+-----------------------------Test--------------------------------
+Test acc: 0.226667 Test Par10: 418.022000
+The portion of each predicted class on test set:
+LKH (label 0): 0.130000
+LKH.restart (label 1): 0.130556
+LKH.crossover (label 2): 0.173889
+EAX (label 3): 0.115556
+EAX.restart (label 4): 0.355556
+MAOS (label 5): 0.094444
+mean_rank_test: 3.000000
+not_worse_than_sbs_test: 0.725000
+------------------------------------------------------------------
+method=regression, learner=rfr, feature-set=Phiera, time=23416.818888902664
+-----------------------------Train--------------------------------
+Train acc: 0.359048 Train Par10: 21.956000
+The portion of each predicted class on training set:
+LKH (label 0): 0.148571
+LKH.restart (label 1): 0.135000
+LKH.crossover (label 2): 0.151190
+EAX (label 3): 0.010238
+EAX.restart (label 4): 0.398333
+MAOS (label 5): 0.156667
+mean_rank_train: 2.230000
+not_worse_than_sbs_train: 0.874762
+-----------------------------Test--------------------------------
+Test acc: 0.221111 Test Par10: 126.103000
+The portion of each predicted class on test set:
+LKH (label 0): 0.131667
+LKH.restart (label 1): 0.111111
+LKH.crossover (label 2): 0.115556
+EAX (label 3): 0.006667
+EAX.restart (label 4): 0.477222
+MAOS (label 5): 0.157778
+mean_rank_test: 2.950000
+not_worse_than_sbs_test: 0.784444
+------------------------------------------------------------------
+method=regression, learner=svr, feature-set=Phiera, time=28129.966990709305
+-----------------------------Train--------------------------------
+Train acc: 0.221667 Train Par10: 472.426000
+The portion of each predicted class on training set:
+LKH (label 0): 0.039286
+LKH.restart (label 1): 0.011905
+LKH.crossover (label 2): 0.131905
+EAX (label 3): 0.235238
+EAX.restart (label 4): 0.581667
+MAOS (label 5): 0.000000
+mean_rank_train: 2.940000
+not_worse_than_sbs_train: 0.847619
+-----------------------------Test--------------------------------
+Test acc: 0.203889 Test Par10: 440.998000
+The portion of each predicted class on test set:
+LKH (label 0): 0.042778
+LKH.restart (label 1): 0.008889
+LKH.crossover (label 2): 0.132778
+EAX (label 3): 0.238333
+EAX.restart (label 4): 0.577222
+MAOS (label 5): 0.000000
+mean_rank_test: 2.950000
+not_worse_than_sbs_test: 0.846667
+------------------------------------------------------------------
+method=regression, learner=dtr, feature-set=UBC-cheap, time=55.52621388435364
+-----------------------------Train--------------------------------
+Train acc: 0.985952 Train Par10: 16.445000
+The portion of each predicted class on training set:
+LKH (label 0): 0.212143
+LKH.restart (label 1): 0.097619
+LKH.crossover (label 2): 0.190000
+EAX (label 3): 0.211667
+EAX.restart (label 4): 0.156429
+MAOS (label 5): 0.132143
+mean_rank_train: 1.000000
+not_worse_than_sbs_train: 1.000000
+-----------------------------Test--------------------------------
+Test acc: 0.255556 Test Par10: 439.687000
+The portion of each predicted class on test set:
+LKH (label 0): 0.233889
+LKH.restart (label 1): 0.197778
+LKH.crossover (label 2): 0.223333
+EAX (label 3): 0.125000
+EAX.restart (label 4): 0.143333
+MAOS (label 5): 0.076667
+mean_rank_test: 2.880000
+not_worse_than_sbs_test: 0.642222
+------------------------------------------------------------------
+method=regression, learner=rfr, feature-set=UBC-cheap, time=2634.135031223297
+-----------------------------Train--------------------------------
+Train acc: 0.371190 Train Par10: 21.909000
+The portion of each predicted class on training set:
+LKH (label 0): 0.137381
+LKH.restart (label 1): 0.130952
+LKH.crossover (label 2): 0.140476
+EAX (label 3): 0.016905
+EAX.restart (label 4): 0.406190
+MAOS (label 5): 0.168095
+mean_rank_train: 2.210000
+not_worse_than_sbs_train: 0.884286
+-----------------------------Test--------------------------------
+Test acc: 0.207778 Test Par10: 90.267000
+The portion of each predicted class on test set:
+LKH (label 0): 0.096667
+LKH.restart (label 1): 0.082778
+LKH.crossover (label 2): 0.104444
+EAX (label 3): 0.006111
+EAX.restart (label 4): 0.538889
+MAOS (label 5): 0.171111
+mean_rank_test: 3.030000
+not_worse_than_sbs_test: 0.798889
+------------------------------------------------------------------
+method=regression, learner=svr, feature-set=UBC-cheap, time=539.4236400127411
+-----------------------------Train--------------------------------
+Train acc: 0.222619 Train Par10: 186.379000
+The portion of each predicted class on training set:
+LKH (label 0): 0.000000
+LKH.restart (label 1): 0.000000
+LKH.crossover (label 2): 0.415238
+EAX (label 3): 0.000000
+EAX.restart (label 4): 0.521905
+MAOS (label 5): 0.062857
+mean_rank_train: 2.910000
+not_worse_than_sbs_train: 0.803571
+-----------------------------Test--------------------------------
+Test acc: 0.223889 Test Par10: 136.222000
+The portion of each predicted class on test set:
+LKH (label 0): 0.000000
+LKH.restart (label 1): 0.000000
+LKH.crossover (label 2): 0.409444
+EAX (label 3): 0.000000
+EAX.restart (label 4): 0.535000
+MAOS (label 5): 0.055556
+mean_rank_test: 2.880000
+not_worse_than_sbs_test: 0.825000
+------------------------------------------------------------------
+method=regression, learner=dtr, feature-set=UBC, time=1082.87864112854
+-----------------------------Train--------------------------------
+Train acc: 0.985952 Train Par10: 28.065000
+The portion of each predicted class on training set:
+LKH (label 0): 0.212143
+LKH.restart (label 1): 0.097619
+LKH.crossover (label 2): 0.190000
+EAX (label 3): 0.211667
+EAX.restart (label 4): 0.156429
+MAOS (label 5): 0.132143
+mean_rank_train: 1.000000
+not_worse_than_sbs_train: 1.000000
+-----------------------------Test--------------------------------
+Test acc: 0.254444 Test Par10: 530.592000
+The portion of each predicted class on test set:
+LKH (label 0): 0.225000
+LKH.restart (label 1): 0.215000
+LKH.crossover (label 2): 0.233333
+EAX (label 3): 0.128889
+EAX.restart (label 4): 0.125556
+MAOS (label 5): 0.072222
+mean_rank_test: 2.880000
+not_worse_than_sbs_test: 0.644444
+------------------------------------------------------------------
+method=regression, learner=rfr, feature-set=UBC, time=45585.97686624527
+-----------------------------Train--------------------------------
+Train acc: 0.357619 Train Par10: 32.550000
+The portion of each predicted class on training set:
+LKH (label 0): 0.112857
+LKH.restart (label 1): 0.126429
+LKH.crossover (label 2): 0.140238
+EAX (label 3): 0.014524
+EAX.restart (label 4): 0.417381
+MAOS (label 5): 0.188571
+mean_rank_train: 2.250000
+not_worse_than_sbs_train: 0.882619
+-----------------------------Test--------------------------------
+Test acc: 0.204444 Test Par10: 129.838000
+The portion of each predicted class on test set:
+LKH (label 0): 0.080000
+LKH.restart (label 1): 0.089444
+LKH.crossover (label 2): 0.090556
+EAX (label 3): 0.004444
+EAX.restart (label 4): 0.557222
+MAOS (label 5): 0.178333
+mean_rank_test: 3.000000
+not_worse_than_sbs_test: 0.812778
+------------------------------------------------------------------
+method=regression, learner=svr, feature-set=UBC, time=6502.81326508522
+-----------------------------Train--------------------------------
+Train acc: 0.163810 Train Par10: 220.291000
+The portion of each predicted class on training set:
+LKH (label 0): 0.000000
+LKH.restart (label 1): 0.003333
+LKH.crossover (label 2): 0.017381
+EAX (label 3): 0.006190
+EAX.restart (label 4): 0.973095
+MAOS (label 5): 0.000000
+mean_rank_train: 3.120000
+not_worse_than_sbs_train: 0.991429
+-----------------------------Test--------------------------------
+Test acc: 0.149444 Test Par10: 224.769000
+The portion of each predicted class on test set:
+LKH (label 0): 0.000000
+LKH.restart (label 1): 0.000556
+LKH.crossover (label 2): 0.021667
+EAX (label 3): 0.003333
+EAX.restart (label 4): 0.974444
+MAOS (label 5): 0.000000
+mean_rank_test: 3.160000
+not_worse_than_sbs_test: 0.987778
+------------------------------------------------------------------
+method=regression, learner=dtr, feature-set=All, time=2348.3975083827972
+-----------------------------Train--------------------------------
+Train acc: 0.638095 Train Par10: 37.226000
+The portion of each predicted class on training set:
+LKH (label 0): 0.107619
+LKH.restart (label 1): 0.050000
+LKH.crossover (label 2): 0.113810
+EAX (label 3): 0.140714
+EAX.restart (label 4): 0.449762
+MAOS (label 5): 0.138095
+mean_rank_train: 1.990000
+not_worse_than_sbs_train: 0.961905
+-----------------------------Test--------------------------------
+Test acc: 0.234444 Test Par10: 374.864000
+The portion of each predicted class on test set:
+LKH (label 0): 0.112222
+LKH.restart (label 1): 0.080000
+LKH.crossover (label 2): 0.113333
+EAX (label 3): 0.117222
+EAX.restart (label 4): 0.465556
+MAOS (label 5): 0.111667
+mean_rank_test: 2.960000
+not_worse_than_sbs_test: 0.793889
+------------------------------------------------------------------
+method=regression, learner=rfr, feature-set=All, time=24699.728689432144
+-----------------------------Train--------------------------------
+Train acc: 0.363810 Train Par10: 33.630000
+The portion of each predicted class on training set:
+LKH (label 0): 0.135714
+LKH.restart (label 1): 0.132143
+LKH.crossover (label 2): 0.166429
+EAX (label 3): 0.014048
+EAX.restart (label 4): 0.397381
+MAOS (label 5): 0.154286
+mean_rank_train: 2.220000
+not_worse_than_sbs_train: 0.879286
+-----------------------------Test--------------------------------
+Test acc: 0.220556 Test Par10: 147.123000
+The portion of each predicted class on test set:
+LKH (label 0): 0.125556
+LKH.restart (label 1): 0.116111
+LKH.crossover (label 2): 0.142778
+EAX (label 3): 0.001667
+EAX.restart (label 4): 0.465000
+MAOS (label 5): 0.148889
+mean_rank_test: 2.940000
+not_worse_than_sbs_test: 0.780556
+------------------------------------------------------------------
+method=regression, learner=svr, feature-set=All, time=28158.09648156166
+-----------------------------Train--------------------------------
+Train acc: 0.221667 Train Par10: 484.191000
+The portion of each predicted class on training set:
+LKH (label 0): 0.039286
+LKH.restart (label 1): 0.011905
+LKH.crossover (label 2): 0.131905
+EAX (label 3): 0.235238
+EAX.restart (label 4): 0.581667
+MAOS (label 5): 0.000000
+mean_rank_train: 2.940000
+not_worse_than_sbs_train: 0.847619
+-----------------------------Test--------------------------------
+Test acc: 0.203889 Test Par10: 452.673000
+The portion of each predicted class on test set:
+LKH (label 0): 0.042778
+LKH.restart (label 1): 0.008889
+LKH.crossover (label 2): 0.132778
+EAX (label 3): 0.238333
+EAX.restart (label 4): 0.577222
+MAOS (label 5): 0.000000
+mean_rank_test: 2.950000
+not_worse_than_sbs_test: 0.846667
+------------------------------------------------------------------
+method=paired-regression, learner=dtr, feature-set=Phiera, time=9847.048752307892
+-----------------------------Train--------------------------------
+Train acc: 0.253333 Train Par10: 798.714000
+The portion of each predicted class on training set:
+LKH (label 0): 0.601905
+LKH.restart (label 1): 0.000000
+LKH.crossover (label 2): 0.000000
+EAX (label 3): 0.000000
+EAX.restart (label 4): 0.000000
+MAOS (label 5): 0.398095
+mean_rank_train: 3.050000
+not_worse_than_sbs_train: 0.423810
+-----------------------------Test--------------------------------
+Test acc: 0.176111 Test Par10: 520.098000
+The portion of each predicted class on test set:
+LKH (label 0): 0.582222
+LKH.restart (label 1): 0.000000
+LKH.crossover (label 2): 0.000000
+EAX (label 3): 0.000000
+EAX.restart (label 4): 0.000000
+MAOS (label 5): 0.417778
+mean_rank_test: 3.530000
+not_worse_than_sbs_test: 0.392222
+------------------------------------------------------------------
+method=paired-regression, learner=rfr, feature-set=Phiera, time=391735.12710022926
+-----------------------------Train--------------------------------
+Train acc: 0.204762 Train Par10: 518.581000
+The portion of each predicted class on training set:
+LKH (label 0): 0.510952
+LKH.restart (label 1): 0.000000
+LKH.crossover (label 2): 0.000000
+EAX (label 3): 0.000000
+EAX.restart (label 4): 0.000000
+MAOS (label 5): 0.489048
+mean_rank_train: 3.480000
+not_worse_than_sbs_train: 0.380238
+-----------------------------Test--------------------------------
+Test acc: 0.165000 Test Par10: 504.006000
+The portion of each predicted class on test set:
+LKH (label 0): 0.531667
+LKH.restart (label 1): 0.000000
+LKH.crossover (label 2): 0.000000
+EAX (label 3): 0.000000
+EAX.restart (label 4): 0.000000
+MAOS (label 5): 0.468333
+mean_rank_test: 3.680000
+not_worse_than_sbs_test: 0.360000
+------------------------------------------------------------------
+method=paired-regression, learner=svr, feature-set=Phiera, time=49145.208696603775
+-----------------------------Train--------------------------------
+Train acc: 0.237143 Train Par10: 407.706000
+The portion of each predicted class on training set:
+LKH (label 0): 0.675000
+LKH.restart (label 1): 0.000000
+LKH.crossover (label 2): 0.000000
+EAX (label 3): 0.000000
+EAX.restart (label 4): 0.000000
+MAOS (label 5): 0.325000
+mean_rank_train: 3.160000
+not_worse_than_sbs_train: 0.482381
+-----------------------------Test--------------------------------
+Test acc: 0.229444 Test Par10: 311.828000
+The portion of each predicted class on test set:
+LKH (label 0): 0.691111
+LKH.restart (label 1): 0.000000
+LKH.crossover (label 2): 0.000000
+EAX (label 3): 0.000000
+EAX.restart (label 4): 0.000000
+MAOS (label 5): 0.308889
+mean_rank_test: 3.180000
+not_worse_than_sbs_test: 0.487778
+------------------------------------------------------------------
+method=paired-regression, learner=dtr, feature-set=UBC-cheap, time=293.48070192337036
+-----------------------------Train--------------------------------
+Train acc: 0.253333 Train Par10: 798.786000
+The portion of each predicted class on training set:
+LKH (label 0): 0.601905
+LKH.restart (label 1): 0.000000
+LKH.crossover (label 2): 0.000000
+EAX (label 3): 0.000000
+EAX.restart (label 4): 0.000000
+MAOS (label 5): 0.398095
+mean_rank_train: 3.050000
+not_worse_than_sbs_train: 0.423810
+-----------------------------Test--------------------------------
+Test acc: 0.175556 Test Par10: 629.140000
+The portion of each predicted class on test set:
+LKH (label 0): 0.585000
+LKH.restart (label 1): 0.000000
+LKH.crossover (label 2): 0.000000
+EAX (label 3): 0.000000
+EAX.restart (label 4): 0.000000
+MAOS (label 5): 0.415000
+mean_rank_test: 3.530000
+not_worse_than_sbs_test: 0.391667
+------------------------------------------------------------------
+method=paired-regression, learner=rfr, feature-set=UBC-cheap, time=6710.539693117142
+-----------------------------Train--------------------------------
+Train acc: 0.191667 Train Par10: 540.974000
+The portion of each predicted class on training set:
+LKH (label 0): 0.487857
+LKH.restart (label 1): 0.000000
+LKH.crossover (label 2): 0.000000
+EAX (label 3): 0.000000
+EAX.restart (label 4): 0.000000
+MAOS (label 5): 0.512143
+mean_rank_train: 3.530000
+not_worse_than_sbs_train: 0.363333
+-----------------------------Test--------------------------------
+Test acc: 0.153889 Test Par10: 552.075000
+The portion of each predicted class on test set:
+LKH (label 0): 0.464444
+LKH.restart (label 1): 0.000000
+LKH.crossover (label 2): 0.000000
+EAX (label 3): 0.000000
+EAX.restart (label 4): 0.000000
+MAOS (label 5): 0.535556
+mean_rank_test: 3.760000
+not_worse_than_sbs_test: 0.340556
+------------------------------------------------------------------
+method=paired-regression, learner=svr, feature-set=UBC-cheap, time=1240.0730638504028
+-----------------------------Train--------------------------------
+Train acc: 0.257381 Train Par10: 287.211000
+The portion of each predicted class on training set:
+LKH (label 0): 0.827381
+LKH.restart (label 1): 0.000000
+LKH.crossover (label 2): 0.000000
+EAX (label 3): 0.000000
+EAX.restart (label 4): 0.000000
+MAOS (label 5): 0.172619
+mean_rank_train: 2.950000
+not_worse_than_sbs_train: 0.538810
+-----------------------------Test--------------------------------
+Test acc: 0.253333 Test Par10: 220.571000
+The portion of each predicted class on test set:
+LKH (label 0): 0.840556
+LKH.restart (label 1): 0.000000
+LKH.crossover (label 2): 0.000000
+EAX (label 3): 0.000000
+EAX.restart (label 4): 0.000000
+MAOS (label 5): 0.159444
+mean_rank_test: 2.950000
+not_worse_than_sbs_test: 0.535556
+------------------------------------------------------------------
+method=paired-regression, learner=dtr, feature-set=UBC, time=5164.882723331451
+-----------------------------Train--------------------------------
+Train acc: 0.253333 Train Par10: 810.406000
+The portion of each predicted class on training set:
+LKH (label 0): 0.601905
+LKH.restart (label 1): 0.000000
+LKH.crossover (label 2): 0.000000
+EAX (label 3): 0.000000
+EAX.restart (label 4): 0.000000
+MAOS (label 5): 0.398095
+mean_rank_train: 3.050000
+not_worse_than_sbs_train: 0.423810
+-----------------------------Test--------------------------------
+Test acc: 0.157222 Test Par10: 578.633000
+The portion of each predicted class on test set:
+LKH (label 0): 0.593889
+LKH.restart (label 1): 0.000000
+LKH.crossover (label 2): 0.000000
+EAX (label 3): 0.000000
+EAX.restart (label 4): 0.000000
+MAOS (label 5): 0.406111
+mean_rank_test: 3.630000
+not_worse_than_sbs_test: 0.368889
+------------------------------------------------------------------
+method=paired-regression, learner=rfr, feature-set=UBC, time=232293.1789739132
+-----------------------------Train--------------------------------
+Train acc: 0.201190 Train Par10: 579.040000
+The portion of each predicted class on training set:
+LKH (label 0): 0.508810
+LKH.restart (label 1): 0.000000
+LKH.crossover (label 2): 0.000000
+EAX (label 3): 0.000000
+EAX.restart (label 4): 0.000000
+MAOS (label 5): 0.491190
+mean_rank_train: 3.470000
+not_worse_than_sbs_train: 0.369762
+-----------------------------Test--------------------------------
+Test acc: 0.157222 Test Par10: 590.382000
+The portion of each predicted class on test set:
+LKH (label 0): 0.483333
+LKH.restart (label 1): 0.000000
+LKH.crossover (label 2): 0.000000
+EAX (label 3): 0.000000
+EAX.restart (label 4): 0.000000
+MAOS (label 5): 0.516667
+mean_rank_test: 3.760000
+not_worse_than_sbs_test: 0.342222
+------------------------------------------------------------------
+method=paired-regression, learner=svr, feature-set=UBC, time=10534.085441827774
+-----------------------------Train--------------------------------
+Train acc: 0.198571 Train Par10: 707.905000
+The portion of each predicted class on training set:
+LKH (label 0): 0.974286
+LKH.restart (label 1): 0.000000
+LKH.crossover (label 2): 0.000000
+EAX (label 3): 0.000000
+EAX.restart (label 4): 0.000000
+MAOS (label 5): 0.025714
+mean_rank_train: 3.170000
+not_worse_than_sbs_train: 0.491905
+-----------------------------Test--------------------------------
+Test acc: 0.203333 Test Par10: 647.892000
+The portion of each predicted class on test set:
+LKH (label 0): 0.967778
+LKH.restart (label 1): 0.000000
+LKH.crossover (label 2): 0.000000
+EAX (label 3): 0.000000
+EAX.restart (label 4): 0.000000
+MAOS (label 5): 0.032222
+mean_rank_test: 3.150000
+not_worse_than_sbs_test: 0.500556
+------------------------------------------------------------------
+method=paired-regression, learner=dtr, feature-set=All, time=4845.278635025024
+-----------------------------Train--------------------------------
+Train acc: 0.193333 Train Par10: 766.197000
+The portion of each predicted class on training set:
+LKH (label 0): 0.424762
+LKH.restart (label 1): 0.000000
+LKH.crossover (label 2): 0.000000
+EAX (label 3): 0.000000
+EAX.restart (label 4): 0.000000
+MAOS (label 5): 0.575238
+mean_rank_train: 3.500000
+not_worse_than_sbs_train: 0.337381
+-----------------------------Test--------------------------------
+Test acc: 0.147778 Test Par10: 575.297000
+The portion of each predicted class on test set:
+LKH (label 0): 0.412222
+LKH.restart (label 1): 0.000000
+LKH.crossover (label 2): 0.000000
+EAX (label 3): 0.000000
+EAX.restart (label 4): 0.000000
+MAOS (label 5): 0.587778
+mean_rank_test: 3.840000
+not_worse_than_sbs_test: 0.318889
+------------------------------------------------------------------
+method=paired-regression, learner=rfr, feature-set=All, time=97062.64705014229
+-----------------------------Train--------------------------------
+Train acc: 0.202143 Train Par10: 500.436000
+The portion of each predicted class on training set:
+LKH (label 0): 0.499048
+LKH.restart (label 1): 0.000000
+LKH.crossover (label 2): 0.000000
+EAX (label 3): 0.000000
+EAX.restart (label 4): 0.000000
+MAOS (label 5): 0.500952
+mean_rank_train: 3.500000
+not_worse_than_sbs_train: 0.377381
+-----------------------------Test--------------------------------
+Test acc: 0.165000 Test Par10: 505.215000
+The portion of each predicted class on test set:
+LKH (label 0): 0.492222
+LKH.restart (label 1): 0.000000
+LKH.crossover (label 2): 0.000000
+EAX (label 3): 0.000000
+EAX.restart (label 4): 0.000000
+MAOS (label 5): 0.507778
+mean_rank_test: 3.720000
+not_worse_than_sbs_test: 0.353889
+------------------------------------------------------------------
+method=paired-regression, learner=svr, feature-set=All, time=49286.215891599655
+-----------------------------Train--------------------------------
+Train acc: 0.237143 Train Par10: 419.471000
+The portion of each predicted class on training set:
+LKH (label 0): 0.675000
+LKH.restart (label 1): 0.000000
+LKH.crossover (label 2): 0.000000
+EAX (label 3): 0.000000
+EAX.restart (label 4): 0.000000
+MAOS (label 5): 0.325000
+mean_rank_train: 3.160000
+not_worse_than_sbs_train: 0.482381
+-----------------------------Test--------------------------------
+Test acc: 0.229444 Test Par10: 323.503000
+The portion of each predicted class on test set:
+LKH (label 0): 0.691111
+LKH.restart (label 1): 0.000000
+LKH.crossover (label 2): 0.000000
+EAX (label 3): 0.000000
+EAX.restart (label 4): 0.000000
+MAOS (label 5): 0.308889
+mean_rank_test: 3.180000
+not_worse_than_sbs_test: 0.487778
+
+Best test par-10
+regression_rfr_UBC-cheap  90.267000
+regression_rfr_Phiera  126.103000
+regression_rfr_UBC  129.838000
+regression_svr_UBC-cheap  136.222000
+regression_rfr_All  147.123000
+
+
+Best cv par-10
+regression_rfr_UBC 121.443400
+regression_rfr_All 133.061200
+regression_rfr_UBC-cheap 136.357600
+regression_rfr_Phiera 138.483800
+regression_svr_UBC-cheap 190.295200
